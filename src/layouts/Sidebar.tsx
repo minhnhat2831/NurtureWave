@@ -1,6 +1,7 @@
 import { useState, type ReactElement } from 'react';
 import { cn } from '@/lib/cn';
 import { ChangePasswordModal } from '@/components/common';
+import useAuthContext from '@/hooks/useAuthContext';
 
 interface SubMenuItem {
   id: string;
@@ -50,6 +51,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const { logout , user : admin} = useAuthContext()
 
   const toggleMenu = (menuId: string) => {
     const newExpanded = new Set(expandedMenus);
@@ -207,7 +209,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
           </div>
           {isOpen && (
             <>
-              <span className="flex-1 text-left text-sm text-gray-900">Super Admin</span>
+              <span className="flex-1 text-left text-sm text-gray-900">{admin}</span>
               <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
@@ -227,7 +229,9 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
             >
               Change Password
             </button>
-            <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors">
+            <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors" onClick={() => {
+              logout();
+            }}>
               Logout
             </button>
           </div>
