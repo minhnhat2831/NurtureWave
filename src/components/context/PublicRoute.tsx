@@ -6,7 +6,7 @@ export default function PublicRoute({ children }: { children: JSX.Element }) {
     const getRef = localStorage.getItem("refreshToken")
 
     if (getAccess && getRef) {
-        return <Navigate to="/admin" replace />
+        return <Navigate to="/static-content" replace />
     }
     return (<>
         {children}
