@@ -1,22 +1,8 @@
 import { useState, type ReactElement } from 'react';
+import { useNavigate, useLocation } from 'react-router';
 import { cn } from '@/lib/cn';
-import { ChangePasswordModal, type ChangePasswordFormData } from '@/components/common';
-
-export interface SidebarUser {
-  name: string;
-  avatar?: string;
-  role?: string;
-}
-
-export interface SidebarProps {
-  isOpen: boolean;
-  onToggle: () => void;
-  activeItem?: string;
-  onNavigate?: (path: string) => void;
-  user?: SidebarUser;
-  onChangePassword?: (data: ChangePasswordFormData) => Promise<void> | void;
-  onLogout?: () => void;
-}
+import { ChangePasswordModal } from '@/components/common';
+import useAuthContext from '@/hooks/useAuthContext';
 
 interface SubMenuItem {
   id: string;
@@ -55,19 +41,33 @@ const menuItems: MenuItem[] = [
   { id: 'search-settings', label: 'Search Settings', icon: 'search', path: '/search-settings' },
 ];
 
-export const Sidebar = ({ 
-  isOpen, 
-  activeItem: controlledActiveItem, 
-  onNavigate,
-  user = { name: 'Super Admin' },
-  onChangePassword,
-  onLogout,
-}: SidebarProps) => {
-  const [activeItem, setActiveItem] = useState('static-content');
-  const currentActiveItem = controlledActiveItem ?? activeItem;
+interface SidebarProps {
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+export const Sidebar = ({ isOpen }: SidebarProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { logout, user } = useAuthContext();
+  
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+
+  const getActiveItem = () => {
+    const path = location.pathname;
+    for (const item of menuItems) {
+      if (item.path === path) return item.id;
+      if (item.children) {
+        const child = item.children.find(c => c.path === path);
+        if (child) return child.id;
+      }
+    }
+    return 'static-content';
+  };
+
+  const activeItem = getActiveItem();
 
   const toggleMenu = (menuId: string) => {
     const newExpanded = new Set(expandedMenus);
@@ -148,7 +148,7 @@ export const Sidebar = ({
       {/* Menu Items */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4">
         {menuItems.map((item) => {
-          const isActive = currentActiveItem === item.id;
+          const isActive = activeItem === item.id;
           const isExpanded = expandedMenus.has(item.id);
           const hasChildren = item.children && item.children.length > 0;
 
@@ -158,11 +158,8 @@ export const Sidebar = ({
                 onClick={() => {
                   if (hasChildren) {
                     toggleMenu(item.id);
-                  } else {
-                    if (onNavigate && item.path) {
-                      onNavigate(item.path);
-                    }
-                    setActiveItem(item.id);
+                  } else if (item.path) {
+                    navigate(item.path);
                   }
                 }}
                 className={cn(
@@ -193,16 +190,11 @@ export const Sidebar = ({
               {isOpen && hasChildren && isExpanded && (
                 <div className="ml-4 mt-1 space-y-1">
                   {item.children!.map((child) => {
-                    const isChildActive = currentActiveItem === child.id;
+                    const isChildActive = activeItem === child.id;
                     return (
                       <button
                         key={child.id}
-                        onClick={() => {
-                          if (onNavigate && child.path) {
-                            onNavigate(child.path);
-                          }
-                          setActiveItem(child.id);
-                        }}
+                        onClick={() => navigate(child.path)}
                         className={cn(
                           'w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors mx-2 rounded-lg',
                           'hover:bg-gray-100',
@@ -228,21 +220,13 @@ export const Sidebar = ({
           onClick={() => setShowUserMenu(!showUserMenu)}
           className="w-full flex items-center gap-3 px-4 py-4 hover:bg-violet-200 transition-colors"
         >
-          {user.avatar ? (
-            <img 
-              src={user.avatar} 
-              alt={user.name}
-              className="w-8 h-8 rounded-full object-cover shrink-0"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-violet-300 flex items-center justify-center text-violet-700 font-semibold text-sm shrink-0">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <div className="w-8 h-8 rounded-full bg-violet-300 flex items-center justify-center text-violet-700 font-semibold text-sm shrink-0">
+            {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
+          </div>
           {isOpen && (
             <>
               <div className="flex-1 text-left">
-                <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                <div className="text-sm font-medium text-gray-900">{user?.name || 'Admin'}</div>
               </div>
               <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
@@ -265,7 +249,7 @@ export const Sidebar = ({
             </button>
             <button 
               onClick={() => {
-                onLogout?.();
+                logout();
                 setShowUserMenu(false);
               }}
               className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -280,8 +264,7 @@ export const Sidebar = ({
       <ChangePasswordModal
         isOpen={showChangePasswordModal}
         onClose={() => setShowChangePasswordModal(false)}
-        onSubmit={async (data) => {
-          await onChangePassword?.(data);
+        onSubmit={async () => {
           setShowChangePasswordModal(false);
         }}
       />
