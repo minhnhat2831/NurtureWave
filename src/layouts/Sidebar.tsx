@@ -1,6 +1,22 @@
 import { useState, type ReactElement } from 'react';
 import { cn } from '@/lib/cn';
-import { ChangePasswordModal } from '@/components/common';
+import { ChangePasswordModal, type ChangePasswordFormData } from '@/components/common';
+
+export interface SidebarUser {
+  name: string;
+  avatar?: string;
+  role?: string;
+}
+
+export interface SidebarProps {
+  isOpen: boolean;
+  onToggle: () => void;
+  activeItem?: string;
+  onNavigate?: (path: string) => void;
+  user?: SidebarUser;
+  onChangePassword?: (data: ChangePasswordFormData) => Promise<void> | void;
+  onLogout?: () => void;
+}
 
 interface SubMenuItem {
   id: string;
@@ -39,16 +55,18 @@ const menuItems: MenuItem[] = [
   { id: 'search-settings', label: 'Search Settings', icon: 'search', path: '/search-settings' },
 ];
 
-interface SidebarProps {
-  isOpen: boolean;
-  onToggle: () => void;
-}
-
-
-export const Sidebar = ({ isOpen }: SidebarProps) => {
+export const Sidebar = ({ 
+  isOpen, 
+  activeItem: controlledActiveItem, 
+  onNavigate,
+  user = { name: 'Super Admin' },
+  onChangePassword,
+  onLogout,
+}: SidebarProps) => {
   const [activeItem, setActiveItem] = useState('static-content');
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const currentActiveItem = controlledActiveItem ?? activeItem;
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   const toggleMenu = (menuId: string) => {
@@ -130,7 +148,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
       {/* Menu Items */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4">
         {menuItems.map((item) => {
-          const isActive = activeItem === item.id;
+          const isActive = currentActiveItem === item.id;
           const isExpanded = expandedMenus.has(item.id);
           const hasChildren = item.children && item.children.length > 0;
 
@@ -141,6 +159,9 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                   if (hasChildren) {
                     toggleMenu(item.id);
                   } else {
+                    if (onNavigate && item.path) {
+                      onNavigate(item.path);
+                    }
                     setActiveItem(item.id);
                   }
                 }}
@@ -172,11 +193,16 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
               {isOpen && hasChildren && isExpanded && (
                 <div className="ml-4 mt-1 space-y-1">
                   {item.children!.map((child) => {
-                    const isChildActive = activeItem === child.id;
+                    const isChildActive = currentActiveItem === child.id;
                     return (
                       <button
                         key={child.id}
-                        onClick={() => setActiveItem(child.id)}
+                        onClick={() => {
+                          if (onNavigate && child.path) {
+                            onNavigate(child.path);
+                          }
+                          setActiveItem(child.id);
+                        }}
                         className={cn(
                           'w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors mx-2 rounded-lg',
                           'hover:bg-gray-100',
@@ -202,12 +228,22 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
           onClick={() => setShowUserMenu(!showUserMenu)}
           className="w-full flex items-center gap-3 px-4 py-4 hover:bg-violet-200 transition-colors"
         >
-          <div className="w-8 h-8 rounded-full bg-violet-300 flex items-center justify-center text-violet-700 font-semibold text-sm shrink-0">
-            A
-          </div>
+          {user.avatar ? (
+            <img 
+              src={user.avatar} 
+              alt={user.name}
+              className="w-8 h-8 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-violet-300 flex items-center justify-center text-violet-700 font-semibold text-sm shrink-0">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+          )}
           {isOpen && (
             <>
-              <span className="flex-1 text-left text-sm text-gray-900">Super Admin</span>
+              <div className="flex-1 text-left">
+                <div className="text-sm font-medium text-gray-900">{user.name}</div>
+              </div>
               <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
@@ -227,7 +263,13 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
             >
               Change Password
             </button>
-            <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors">
+            <button 
+              onClick={() => {
+                onLogout?.();
+                setShowUserMenu(false);
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+            >
               Logout
             </button>
           </div>
@@ -238,7 +280,10 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
       <ChangePasswordModal
         isOpen={showChangePasswordModal}
         onClose={() => setShowChangePasswordModal(false)}
-        onSubmit={() => setShowChangePasswordModal(false)}
+        onSubmit={async (data) => {
+          await onChangePassword?.(data);
+          setShowChangePasswordModal(false);
+        }}
       />
     </aside>
   );
