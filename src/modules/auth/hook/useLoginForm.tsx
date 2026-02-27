@@ -29,7 +29,7 @@ export default function useLoginForm() {
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", refreshToken);
 
-            navigate(`/static-content`);
+            navigate(`/admin`);
             toast("Success")
             isLoading(false)
         } catch (error: any) {

@@ -1,5 +1,4 @@
 import { useState, type ReactElement } from 'react';
-import { useNavigate, useLocation } from 'react-router';
 import { cn } from '@/lib/cn';
 import { ChangePasswordModal } from '@/components/common';
 import useAuthContext from '@/hooks/useAuthContext';
@@ -46,28 +45,13 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
+
 export const Sidebar = ({ isOpen }: SidebarProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { logout, user } = useAuthContext();
-  
-  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
+  const [activeItem, setActiveItem] = useState('static-content');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
-
-  const getActiveItem = () => {
-    const path = location.pathname;
-    for (const item of menuItems) {
-      if (item.path === path) return item.id;
-      if (item.children) {
-        const child = item.children.find(c => c.path === path);
-        if (child) return child.id;
-      }
-    }
-    return 'static-content';
-  };
-
-  const activeItem = getActiveItem();
+  const { logout , user : admin} = useAuthContext()
 
   const toggleMenu = (menuId: string) => {
     const newExpanded = new Set(expandedMenus);
@@ -158,8 +142,8 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                 onClick={() => {
                   if (hasChildren) {
                     toggleMenu(item.id);
-                  } else if (item.path) {
-                    navigate(item.path);
+                  } else {
+                    setActiveItem(item.id);
                   }
                 }}
                 className={cn(
@@ -194,7 +178,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                     return (
                       <button
                         key={child.id}
-                        onClick={() => navigate(child.path)}
+                        onClick={() => setActiveItem(child.id)}
                         className={cn(
                           'w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors mx-2 rounded-lg',
                           'hover:bg-gray-100',
@@ -221,13 +205,11 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
           className="w-full flex items-center gap-3 px-4 py-4 hover:bg-violet-200 transition-colors"
         >
           <div className="w-8 h-8 rounded-full bg-violet-300 flex items-center justify-center text-violet-700 font-semibold text-sm shrink-0">
-            {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
+            A
           </div>
           {isOpen && (
             <>
-              <div className="flex-1 text-left">
-                <div className="text-sm font-medium text-gray-900">{user?.name || 'Admin'}</div>
-              </div>
+              <span className="flex-1 text-left text-sm text-gray-900">{admin}</span>
               <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
@@ -247,13 +229,9 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
             >
               Change Password
             </button>
-            <button 
-              onClick={() => {
-                logout();
-                setShowUserMenu(false);
-              }}
-              className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
-            >
+            <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors" onClick={() => {
+              logout();
+            }}>
               Logout
             </button>
           </div>
@@ -264,9 +242,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
       <ChangePasswordModal
         isOpen={showChangePasswordModal}
         onClose={() => setShowChangePasswordModal(false)}
-        onSubmit={async () => {
-          setShowChangePasswordModal(false);
-        }}
+        onSubmit={() => setShowChangePasswordModal(false)}
       />
     </aside>
   );
