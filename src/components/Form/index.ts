@@ -12,4 +12,16 @@ export { BaseDatePicker } from './BaseDatePicker';
 export type { BaseDatePickerProps } from './BaseDatePicker';
 
 // React Hook Form Wrappers
-export { FormInput, FormTextArea, FormSelect, FormDatePicker } from './FormField';
+export {
+  FormInput,
+  FormTextArea,
+  FormSelect,
+  FormDatePicker,
+  FormNumberInput,
+  // RHF Aliases
+  RHFInput,
+  RHFTextArea,
+  RHFSelect,
+  RHFDatePicker,
+  RHFNumberInput,
+} from './FormField';
