@@ -7,7 +7,7 @@ export interface FilterOption {
 
 export interface SearchFilterBarProps {
   // Search
-  searchValue: string;
+  searchValue?: string;
   onSearchChange: (value: string) => void;
   searchPlaceholder?: string;
 
