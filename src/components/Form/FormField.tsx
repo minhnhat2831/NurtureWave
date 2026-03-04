@@ -127,6 +127,10 @@ export function FormNumberInput<T extends FieldValues>({
         <BaseInput
           {...field}
           type="number"
+          onChange={(e) => {
+            const value = e.target.value
+            field.onChange(value === '' ? undefined : Number(value))
+          }}
           error={fieldState.error?.message}
           {...props}
         />

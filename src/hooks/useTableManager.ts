@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useQueryParams } from './useQueryParams'
-import type { MetadataType } from '@/constants/SchemaConstants'
+import type { MetadataType, ParamsType } from '@/constants/SchemaConstants'
 
 interface UseTableManagerOptions<TData> {
   queryKey: string[]
-  queryFn: (params: any) => Promise<{
+  queryFn: (params: ParamsType) => Promise<{
     data: TData[]
     metadata: MetadataType
   }>

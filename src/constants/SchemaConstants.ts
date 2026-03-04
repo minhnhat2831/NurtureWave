@@ -1,13 +1,18 @@
 import * as z from 'zod'
 
-const required = 'This field is required'
+// Validation message constant
+export const REQUIRED_MESSAGE = 'This field is required.'
 
 export const StringNullAndOptional = z.string().nullable().optional()
 export const NumberNullAndOptional = z.number().nullable().optional()
-export const StringRequired = z.string().min(1, required)
-export const NumberRequired = z.number().min(1, required)
-export const EmailRequired = z.string().email({ message: 'Invalid email address' }).min(1, required)
+export const StringRequired = z.string().min(1, REQUIRED_MESSAGE)
+export const NumberRequired = z.union([z.number(), z.undefined()])
+  .refine((val) => val !== undefined && val >= 1, {
+    message: REQUIRED_MESSAGE,
+  })
+export const EmailRequired = z.string().email({ message: REQUIRED_MESSAGE }).min(1, REQUIRED_MESSAGE)
 export const StatusRequired = z.enum(['active', 'inactive'])
+export const ArticleStatusRequired = z.enum(['draft', 'published', 'unpublished'], { message: REQUIRED_MESSAGE })
 
 export const ParamsSchema = z.object({
     page: z.number().optional(),

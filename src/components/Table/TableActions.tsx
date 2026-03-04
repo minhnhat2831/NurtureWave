@@ -21,7 +21,7 @@ export const TableActions = ({
         <button
           onClick={onEdit}
           title={editLabel}
-          className="p-1.5 text-violet-600 hover:bg-violet-50 rounded transition-colors"
+          className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -37,7 +37,7 @@ export const TableActions = ({
         <button
           onClick={onDelete}
           title={deleteLabel}
-          className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
+          className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path

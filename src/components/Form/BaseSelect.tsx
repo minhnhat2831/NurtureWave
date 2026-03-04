@@ -48,32 +48,33 @@ export const BaseSelect = forwardRef<HTMLSelectElement, BaseSelectProps>(
             ref={ref}
             disabled={disabled}
             className={cn(
-              'w-full px-3 py-2 border rounded-lg text-sm outline-none transition-all appearance-none bg-white',
-              'pr-10 cursor-pointer',
+              'w-full px-3 py-2.5 border rounded-lg text-sm outline-none transition-all appearance-none bg-white',
+              'pr-10 cursor-pointer text-gray-900',
               'focus:ring-2 focus:ring-violet-500 focus:border-violet-500',
               error
                 ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
                 : 'border-gray-300 hover:border-gray-400',
               disabled && 'bg-gray-50 cursor-not-allowed opacity-60',
+              !props.value && 'text-gray-400',
               className
             )}
             {...props}
           >
             {placeholder && (
-              <option value="" disabled>
+              <option value="" disabled hidden className="text-gray-400">
                 {placeholder}
               </option>
             )}
             {options.map((option) => (
-              <option key={option.value} value={option.value} disabled={option.disabled}>
+              <option key={option.value} value={option.value} disabled={option.disabled} className="text-gray-900">
                 {option.label}
               </option>
             ))}
           </select>
           {/* Dropdown arrow icon */}
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none">
             <svg
-              className="w-4 h-4 text-gray-500"
+              className="w-5 h-5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
