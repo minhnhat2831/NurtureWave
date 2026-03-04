@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useCallback } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { StatusBadge, DataTable, SearchFilterBar, TableActions, ConfirmModal, Button } from '@/components/common'
 import { useArticleList } from '../hook/useArticleList'
@@ -9,6 +9,7 @@ import { deleteArticles } from '../api/api'
 import { toast, ToastContainer } from 'react-toastify'
 import { useHeader } from '@/hooks/useHeaderContext'
 import { formatDateTime } from '@/utils/formatDateTime'
+import { useArticleModalStore } from '../store'
 import 'react-toastify/dist/ReactToastify.css'
 
 /**
@@ -32,17 +33,46 @@ export default function ArticleListPage() {
     isLoading,
   } = useArticleList()
 
-  // Modal states
-  const [showFormModal, setShowFormModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
-  const [articleToDelete, setArticleToDelete] = useState<string | null>(null)
+  // Modal states from zustand
+  const {
+    showFormModal,
+    selectedArticle,
+    openFormModal,
+    closeFormModal,
+    showDeleteModal,
+    articleToDelete,
+    openDeleteModal,
+    closeDeleteModal,
+  } = useArticleModalStore()
 
-  // Handlers
-  const handleCreate = () => {
-    setSelectedArticle(null)
-    setShowFormModal(true)
-  }
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (ids: string[]) => deleteArticles(ids),
+    onSuccess: () => {
+      toast.success('Article deleted successfully')
+      queryClient.invalidateQueries({ queryKey: ['articles'] })
+      closeDeleteModal()
+    },
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } }
+      toast.error(err.response?.data?.message || 'Failed to delete article')
+    },
+  })
+
+  // Handlers with useCallback
+  const handleEdit = useCallback((article: Article) => {
+    openFormModal(article)
+  }, [openFormModal])
+
+  const handleDeleteClick = useCallback((id: string) => {
+    openDeleteModal(id)
+  }, [openDeleteModal])
+
+  const handleDeleteConfirm = useCallback(() => {
+    if (articleToDelete) {
+      deleteMutation.mutate([articleToDelete])
+    }
+  }, [articleToDelete, deleteMutation])
 
   // Set header content
   useEffect(() => {
@@ -57,7 +87,7 @@ export default function ArticleListPage() {
         />
       ),
       actions: (
-        <Button onClick={handleCreate} variant="primary">
+        <Button onClick={() => openFormModal()} variant="primary">
           Create Article
         </Button>
       ),
@@ -66,47 +96,10 @@ export default function ArticleListPage() {
     return () => {
       setHeaderContent({})
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, setHeaderContent])
+  }, [search, setHeaderContent, setSearch, openFormModal])
 
-  // Delete mutation
-  const deleteMutation = useMutation({
-    mutationFn: (ids: string[]) => deleteArticles(ids),
-    onSuccess: () => {
-      toast.success('Article deleted successfully')
-      queryClient.invalidateQueries({ queryKey: ['articles'] })
-      setShowDeleteModal(false)
-      setArticleToDelete(null)
-    },
-    onError: (error: unknown) => {
-      const err = error as { response?: { data?: { message?: string } } }
-      toast.error(err.response?.data?.message || 'Failed to delete article')
-    },
-  })
-
-  const handleEdit = (article: Article) => {
-    setSelectedArticle(article)
-    setShowFormModal(true)
-  }
-
-  const handleDeleteClick = (id: string) => {
-    setArticleToDelete(id)
-    setShowDeleteModal(true)
-  }
-
-  const handleDeleteConfirm = () => {
-    if (articleToDelete) {
-      deleteMutation.mutate([articleToDelete])
-    }
-  }
-
-  const handleFormSuccess = () => {
-    setShowFormModal(false)
-    setSelectedArticle(null)
-  }
-
-  // Table columns definition
-  const columns: ColumnDef<Article>[] = [
+  // Table columns definition with useMemo
+  const columns = useMemo<ColumnDef<Article>[]>(() => [
     {
       accessorKey: 'id',
       header: 'ID',
@@ -161,7 +154,7 @@ export default function ArticleListPage() {
         />
       ),
     },
-  ]
+  ], [handleEdit, handleDeleteClick])
 
   return (
     <div className="space-y-4">
@@ -183,21 +176,15 @@ export default function ArticleListPage() {
       {/* Create/Edit Modal */}
       <ArticleFormModal
         isOpen={showFormModal}
-        onClose={() => {
-          setShowFormModal(false)
-          setSelectedArticle(null)
-        }}
+        onClose={closeFormModal}
         article={selectedArticle}
-        onSuccess={handleFormSuccess}
+        onSuccess={closeFormModal}
       />
 
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={showDeleteModal}
-        onClose={() => {
-          setShowDeleteModal(false)
-          setArticleToDelete(null)
-        }}
+        onClose={closeDeleteModal}
         onConfirm={handleDeleteConfirm}
         title="Delete Article"
         message="Are you sure you want to delete this article? This action cannot be undone."
