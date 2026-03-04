@@ -37,8 +37,8 @@ export const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
           ref={ref}
           disabled={disabled}
           className={cn(
-            'w-full px-3 py-2 border rounded-lg text-sm outline-none transition-all',
-            'placeholder:text-gray-400',
+            'w-full px-3 py-2.5 border rounded-lg text-sm outline-none transition-all',
+            'text-gray-900 placeholder:text-gray-400',
             'focus:ring-2 focus:ring-violet-500 focus:border-violet-500',
             error
               ? 'border-red-500 focus:ring-red-500 focus:border-red-500'

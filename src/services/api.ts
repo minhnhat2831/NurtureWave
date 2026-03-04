@@ -15,5 +15,17 @@ export const API_ENDPOINTS = {
     //Admin admin
     API_ADMIN_ADMINS : '/admins/admins',
     API_ADMIN_ADMINS_ID : (id? : string) => `/admins/admins/${id}`,
+
+    //Admin articles
+    API_ADMIN_ARTICLES : '/admins/articles',
+    API_ADMIN_ARTICLES_ID : (id: string) => `/admins/articles/${id}`,
+    API_ADMIN_ARTICLES_SLUG : (slug: string) => `/admins/articles/by-slug/${slug}`,
+
+    //Admin categories
+    API_ADMIN_CATEGORIES : '/admins/categories',
+    API_ADMIN_CATEGORIES_ID : (id: string) => `/admins/categories/${id}`,
+
+    //Medias - Upload
+    API_MEDIAS_SIGNED_URL : '/medias/signed-url',
 }
 
