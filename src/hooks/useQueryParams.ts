@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import queryString from 'query-string'
 import { ParamsSchema, type ParamsType } from '../constants/SchemaConstants'
@@ -22,7 +22,7 @@ export const useQueryParams = () => {
     return result.success ? result.data : {}
   }, [location.search])
 
-  const setParams = (newParams: Partial<ParamsType>) => {
+  const setParams = useCallback((newParams: Partial<ParamsType>) => {
     const current = queryString.parse(location.search)
 
     const merged = {
@@ -49,14 +49,14 @@ export const useQueryParams = () => {
       pathname: location.pathname,
       search: stringified,
     })
-  }
+  }, [navigate, location.search, location.pathname])
 
-  const clearParams = () => {
+  const clearParams = useCallback(() => {
     navigate({
       pathname: location.pathname,
       search: '',
     })
-  }
+  }, [navigate, location.pathname])
 
   return {
     params,

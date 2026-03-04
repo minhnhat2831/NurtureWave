@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useCallback } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { StatusBadge, DataTable, SearchFilterBar, TableActions, ConfirmModal, Button } from '@/components/common'
+import { StatusBadge, DataTable, SearchFilterBar, TableActions, Button } from '@/components/common'
 import { useArticleList } from '../hook/useArticleList'
 import { ArticleFormModal } from './ArticleFormModal'
 import type { Article } from '../schema/ArticleSchema.type'
@@ -10,6 +10,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { useHeader } from '@/hooks/useHeaderContext'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { useArticleModalStore } from '../store'
+import { useGlobalModalStore } from '@/stores'
 import 'react-toastify/dist/ReactToastify.css'
 
 /**
@@ -39,11 +40,9 @@ export default function ArticleListPage() {
     selectedArticle,
     openFormModal,
     closeFormModal,
-    showDeleteModal,
-    articleToDelete,
-    openDeleteModal,
-    closeDeleteModal,
   } = useArticleModalStore()
+
+  const { showConfirm, closeConfirm, setConfirmLoading } = useGlobalModalStore()
 
   // Delete mutation
   const deleteMutation = useMutation({
@@ -51,11 +50,14 @@ export default function ArticleListPage() {
     onSuccess: () => {
       toast.success('Article deleted successfully')
       queryClient.invalidateQueries({ queryKey: ['articles'] })
-      closeDeleteModal()
+      setConfirmLoading(false)
+      closeConfirm()
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } }
       toast.error(err.response?.data?.message || 'Failed to delete article')
+      setConfirmLoading(false)
+      closeConfirm()
     },
   })
 
@@ -65,14 +67,17 @@ export default function ArticleListPage() {
   }, [openFormModal])
 
   const handleDeleteClick = useCallback((id: string) => {
-    openDeleteModal(id)
-  }, [openDeleteModal])
-
-  const handleDeleteConfirm = useCallback(() => {
-    if (articleToDelete) {
-      deleteMutation.mutate([articleToDelete])
-    }
-  }, [articleToDelete, deleteMutation])
+    showConfirm({
+      title: 'Delete Article',
+      message: 'Are you sure you want to delete this article? This action cannot be undone.',
+      variant: 'danger',
+      confirmText: 'Delete',
+      onConfirm: () => {
+        setConfirmLoading(true)
+        deleteMutation.mutate([id])
+      },
+    })
+  }, [showConfirm, setConfirmLoading, deleteMutation])
 
   // Set header content
   useEffect(() => {
@@ -179,18 +184,6 @@ export default function ArticleListPage() {
         onClose={closeFormModal}
         article={selectedArticle}
         onSuccess={closeFormModal}
-      />
-
-      {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        onClose={closeDeleteModal}
-        onConfirm={handleDeleteConfirm}
-        title="Delete Article"
-        message="Are you sure you want to delete this article? This action cannot be undone."
-        confirmText="Delete"
-        variant="danger"
-        isLoading={deleteMutation.isPending}
       />
     </div>
   )

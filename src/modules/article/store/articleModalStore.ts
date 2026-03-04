@@ -7,12 +7,6 @@ interface ArticleModalState {
   selectedArticle: Article | null
   openFormModal: (article?: Article) => void
   closeFormModal: () => void
-
-  // Delete Modal
-  showDeleteModal: boolean
-  articleToDelete: string | null
-  openDeleteModal: (articleId: string) => void
-  closeDeleteModal: () => void
 }
 
 export const useArticleModalStore = create<ArticleModalState>((set) => ({
@@ -28,19 +22,5 @@ export const useArticleModalStore = create<ArticleModalState>((set) => ({
   closeFormModal: () => set({
     showFormModal: false,
     selectedArticle: null,
-  }),
-
-  // Delete Modal State
-  showDeleteModal: false,
-  articleToDelete: null,
-  
-  openDeleteModal: (articleId) => set({
-    showDeleteModal: true,
-    articleToDelete: articleId,
-  }),
-  
-  closeDeleteModal: () => set({
-    showDeleteModal: false,
-    articleToDelete: null,
   }),
 }))
