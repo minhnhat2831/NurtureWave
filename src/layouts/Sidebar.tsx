@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router';
 import { cn } from '@/lib/cn';
 import { ChangePasswordModal } from '@/components/common';
 import useAuthContext from '@/hooks/useAuthContext';
+import { useGlobalModalStore } from '@/stores';
 
 interface SubMenuItem {
   id: string;
@@ -52,8 +53,8 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
   const location = useLocation()
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [manualExpandedMenus, setManualExpandedMenus] = useState<Set<string>>(new Set());
-  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const { logout , user : admin} = useAuthContext()
+  const { showChangePasswordModal, openChangePasswordModal, closeChangePasswordModal } = useGlobalModalStore()
 
   // Derive active item and parent from current path
   const getActiveInfo = () => {
@@ -252,7 +253,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
           <div className="absolute bottom-full left-0 right-0 mb-2 mx-4 bg-white rounded-lg shadow-lg overflow-hidden">
             <button 
               onClick={() => {
-                setShowChangePasswordModal(true);
+                openChangePasswordModal();
                 setShowUserMenu(false);
               }}
               className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -271,8 +272,8 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
       {/* Change Password Modal */}
       <ChangePasswordModal
         isOpen={showChangePasswordModal}
-        onClose={() => setShowChangePasswordModal(false)}
-        onSubmit={() => setShowChangePasswordModal(false)}
+        onClose={closeChangePasswordModal}
+        onSubmit={closeChangePasswordModal}
       />
     </aside>
   );

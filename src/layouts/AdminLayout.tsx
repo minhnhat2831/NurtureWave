@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Sidebar, Header } from '.';
 import { HeaderProvider } from '@/hooks/useHeaderContext';
+import { GlobalConfirmDialog } from '@/components/common';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -25,6 +26,8 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
             {children}
           </main>
         </div>
+
+        <GlobalConfirmDialog />
       </div>
     </HeaderProvider>
   );

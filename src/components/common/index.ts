@@ -15,6 +15,8 @@ export type { StatusBadgeProps, StatusType } from './StatusBadge';
 export { ConfirmModal } from './ConfirmModal';
 export type { ConfirmModalProps } from './ConfirmModal';
 
+export { GlobalConfirmDialog } from './GlobalConfirmDialog';
+
 export { ChangePasswordModal } from './ChangePasswordModal';
 export type { ChangePasswordModalProps, ChangePasswordFormData } from './ChangePasswordModal';
 
