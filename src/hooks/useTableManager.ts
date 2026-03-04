@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { useQueryParams } from './useQueryParams'
 import type { MetadataType, ParamsType } from '@/constants/SchemaConstants'
 
@@ -39,22 +40,22 @@ export const useTableManager = <TData>({
 
   const metadata = query.data?.metadata
 
-  // handlers
-  const setPage = (newPage: number) => {
+  // handlers with useCallback for stable references
+  const setPage = useCallback((newPage: number) => {
     setParams({ page: newPage })
-  }
+  }, [setParams])
 
-  const setLimit = (newLimit: number) => {
+  const setLimit = useCallback((newLimit: number) => {
     setParams({ limit: newLimit, page: 1 })
-  }
+  }, [setParams])
 
-  const setSearch = (value: string) => {
+  const setSearch = useCallback((value: string) => {
     setParams({ search: value, page: 1 })
-  }
+  }, [setParams])
 
-  const setSort = (value: string) => {
+  const setSort = useCallback((value: string) => {
     setParams({ sort: value })
-  }
+  }, [setParams])
 
   return {
     ...query,
