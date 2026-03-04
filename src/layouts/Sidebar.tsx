@@ -1,4 +1,5 @@
 import { useState, type ReactElement } from 'react';
+import { useNavigate, useLocation } from 'react-router';
 import { cn } from '@/lib/cn';
 import { ChangePasswordModal } from '@/components/common';
 import useAuthContext from '@/hooks/useAuthContext';
@@ -31,7 +32,7 @@ const menuItems: MenuItem[] = [
       { id: 'client-management', label: 'Client Management', path: '/client-management' },
     ]
   },
-  { id: 'article', label: 'Article', icon: 'file-text', path: '/article' },
+  { id: 'article', label: 'Article', icon: 'file-text', path: '/admin/articles' },
   { id: 'pd-session', label: 'PD Session', icon: 'calendar', path: '/pd-session' },
   { id: 'category', label: 'Category', icon: 'grid', path: '/category' },
   { id: 'subscriptions', label: 'Subscriptions', icon: 'package', path: '/subscriptions' },
@@ -47,20 +48,43 @@ interface SidebarProps {
 
 
 export const Sidebar = ({ isOpen }: SidebarProps) => {
-  const [activeItem, setActiveItem] = useState('static-content');
+  const navigate = useNavigate()
+  const location = useLocation()
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
+  const [manualExpandedMenus, setManualExpandedMenus] = useState<Set<string>>(new Set());
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const { logout , user : admin} = useAuthContext()
 
-  const toggleMenu = (menuId: string) => {
-    const newExpanded = new Set(expandedMenus);
-    if (newExpanded.has(menuId)) {
-      newExpanded.delete(menuId);
-    } else {
-      newExpanded.add(menuId);
+  // Derive active item and parent from current path
+  const getActiveInfo = () => {
+    const path = location.pathname;
+    for (const item of menuItems) {
+      if (item.path === path) return { activeItem: item.id, parentId: null };
+      if (item.children) {
+        for (const child of item.children) {
+          if (child.path === path) return { activeItem: child.id, parentId: item.id };
+        }
+      }
     }
-    setExpandedMenus(newExpanded);
+    return { activeItem: 'static-content', parentId: null };
+  };
+
+  const { activeItem, parentId } = getActiveInfo();
+
+  // Auto-expand parent menu if child is active
+  const expandedMenus = new Set(manualExpandedMenus);
+  if (parentId) expandedMenus.add(parentId);
+
+  const toggleMenu = (menuId: string) => {
+    setManualExpandedMenus(prev => {
+      const next = new Set(prev);
+      if (next.has(menuId)) {
+        next.delete(menuId);
+      } else {
+        next.add(menuId);
+      }
+      return next;
+    });
   };
 
   const renderIcon = (iconName: string, isActive: boolean) => {
@@ -143,7 +167,9 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                   if (hasChildren) {
                     toggleMenu(item.id);
                   } else {
-                    setActiveItem(item.id);
+                    if (item.path) {
+                      navigate(item.path);
+                    }
                   }
                 }}
                 className={cn(
@@ -178,7 +204,11 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                     return (
                       <button
                         key={child.id}
-                        onClick={() => setActiveItem(child.id)}
+                        onClick={() => {
+                          if (child.path) {
+                            navigate(child.path)
+                          }
+                        }}
                         className={cn(
                           'w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors mx-2 rounded-lg',
                           'hover:bg-gray-100',

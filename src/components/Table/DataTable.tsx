@@ -39,6 +39,7 @@ export const DataTable = <TData,>({
   error,
   className,
 }: DataTableProps<TData>) => {
+  'use no memo'; // Disable React Compiler memoization for TanStack Table
   const table = useReactTable({
     data,
     columns,
@@ -69,7 +70,7 @@ export const DataTable = <TData,>({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-sm font-normal text-gray-700"
                   >
                     {header.isPlaceholder
                       ? null
