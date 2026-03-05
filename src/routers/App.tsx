@@ -5,6 +5,7 @@ import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
 import ProtectedRoute from "@/components/context/ProtectedRoute";
+import AdminPage from "@/modules/admin/page/AdminPage";
 
 function App() {
   return (
@@ -48,7 +49,7 @@ function App() {
         <Route path="/admin-management" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Admin Management" />
+              <AdminPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

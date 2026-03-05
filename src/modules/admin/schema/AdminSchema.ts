@@ -20,15 +20,38 @@ export const createAdminUserSchema = z.object({
   firstName: SchemaConstants.StringRequired,
   lastName: SchemaConstants.StringRequired,
   status: SchemaConstants.StringRequired,
+}).superRefine((data, ctx) => {
+  if (data.password && data.password.length > 0 && data.password.length < 8) {
+    ctx.addIssue({
+      path: ["password"],
+      message: "Password must be at least 8 characters long",
+      code: z.ZodIssueCode.custom,
+    });
+  }
+  if(data.username && data.username.length < 3) {
+    ctx.addIssue({
+      path: ["username"],
+      message: "Username must be at least 3 characters long",
+      code: z.ZodIssueCode.custom,
+    });
+  }
 });
 
 export const editAdminUserSchema = z.object({
   username: SchemaConstants.StringRequired,
-  password: SchemaConstants.StringNullAndOptional,
+  password: z.string(),
   email: SchemaConstants.EmailRequired,
   firstName: SchemaConstants.StringRequired,
   lastName: SchemaConstants.StringRequired,
   status: SchemaConstants.StringRequired,
+}).superRefine((data, ctx) => {
+  if (data.password && data.password.length > 0 && data.password.length < 8) {
+    ctx.addIssue({
+      path: ["password"],
+      message: "Password must be at least 8 characters long",
+      code: z.ZodIssueCode.custom,
+    });
+  }
 });
 
 export const adminListSchema = z.object({
