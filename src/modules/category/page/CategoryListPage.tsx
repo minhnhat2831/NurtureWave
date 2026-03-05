@@ -1,23 +1,24 @@
 import { useEffect, useMemo, useCallback } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { StatusBadge, DataTable, SearchFilterBar, TableActions, Button } from '@/components/common'
-import { useArticleList } from '../hook/useArticleList'
-import { ArticleFormModal } from './ArticleFormModal'
-import type { Article } from '../schema/ArticleSchema.type'
+import { useCategoryList } from '../hook/useCategoryList'
+import { CategoryFormModal } from './CategoryFormModal'
+import type { Category } from '../schema/CategorySchema.type'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { deleteArticles } from '../api/api'
+import { deleteCategories } from '../api/api'
 import { toast, ToastContainer } from 'react-toastify'
 import { useHeader } from '@/hooks/useHeaderContext'
 import { formatDateTime } from '@/utils/formatDateTime'
-import { useArticleModalStore } from '../store'
+import { useCategoryModalStore } from '../store'
 import { useGlobalModalStore } from '@/stores'
+import { getPictureUrl } from '@/utils/imageHelpers'
 import 'react-toastify/dist/ReactToastify.css'
 
 /**
- * ARTICLE LIST PAGE
- * Main page for article management with CRUD operations
+ * CATEGORY LIST PAGE
+ * Main page for category management with CRUD operations
  */
-export default function ArticleListPage() {
+export default function CategoryListPage() {
   const queryClient = useQueryClient()
   const { setHeaderContent } = useHeader()
 
@@ -34,44 +35,44 @@ export default function ArticleListPage() {
     setSearch,
     setSort,
     isLoading,
-  } = useArticleList()
+  } = useCategoryList()
 
   // Modal states from zustand
   const {
     showFormModal,
-    selectedArticle,
+    selectedCategory,
     openFormModal,
     closeFormModal,
-  } = useArticleModalStore()
+  } = useCategoryModalStore()
 
   const { showConfirm, closeConfirm, setConfirmLoading } = useGlobalModalStore()
 
   // Delete mutation
   const deleteMutation = useMutation({
-    mutationFn: (ids: string[]) => deleteArticles(ids),
+    mutationFn: (ids: string[]) => deleteCategories(ids),
     onSuccess: () => {
-      toast.success('Article deleted successfully')
-      queryClient.invalidateQueries({ queryKey: ['articles'] })
+      toast.success('Category deleted successfully')
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
       setConfirmLoading(false)
       closeConfirm()
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } }
-      toast.error(err.response?.data?.message || 'Failed to delete article')
+      toast.error(err.response?.data?.message || 'Failed to delete category')
       setConfirmLoading(false)
       closeConfirm()
     },
   })
 
   // Handlers with useCallback
-  const handleEdit = useCallback((article: Article) => {
-    openFormModal(article)
+  const handleEdit = useCallback((category: Category) => {
+    openFormModal(category)
   }, [openFormModal])
 
   const handleDeleteClick = useCallback((id: string) => {
     showConfirm({
-      title: 'Delete Article',
-      message: 'Are you sure you want to delete this article? This action cannot be undone.',
+      title: 'Delete Category',
+      message: 'Are you sure you want to delete this category? This action cannot be undone.',
       variant: 'danger',
       confirmText: 'Delete',
       onConfirm: () => {
@@ -84,7 +85,7 @@ export default function ArticleListPage() {
   // Set header content
   useEffect(() => {
     setHeaderContent({
-      title: 'Article',
+      title: 'Category',
       searchBar: (
         <SearchFilterBar
           searchValue={search}
@@ -95,7 +96,7 @@ export default function ArticleListPage() {
       ),
       actions: (
         <Button onClick={() => openFormModal()} variant="primary">
-          Create Article
+          Create Category
         </Button>
       ),
     })
@@ -106,38 +107,36 @@ export default function ArticleListPage() {
   }, [search, setHeaderContent, setSearch, openFormModal])
 
   // Table columns definition with useMemo
-  const columns = useMemo<ColumnDef<Article>[]>(() => [
+  const columns = useMemo<ColumnDef<Category>[]>(() => [
     {
-      accessorKey: 'id',
-      header: 'ID',
-      cell: ({ row }) => (
-        <div className="max-w-50">
-          <span className="text-sm text-gray-600 font-mono break-all">{row.original.id}</span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'title',
-      header: 'Title',
+      accessorKey: 'name',
+      header: 'Name',
       cell: ({ row }) => (
         <div className="max-w-xs">
-          <p className="text-gray-900">{row.original.title}</p>
+          <p className="text-gray-900">{row.original.name}</p>
         </div>
       ),
     },
     {
-      accessorKey: 'author',
-      header: 'Author',
-      cell: ({ row }) => <span className="text-gray-700">{row.original.author}</span>,
+      accessorKey: 'picture',
+      header: 'Image',
+      cell: ({ row }) => {
+        const pictureUrl = getPictureUrl(row.original.picture)
+        return row.original.picture ? (
+          <img 
+            src={pictureUrl} 
+            alt={row.original.name}
+            className="w-12 h-12 object-cover rounded"
+          />
+        ) : (
+          <span className="text-gray-400">-</span>
+        )
+      },
     },
     {
-      accessorKey: 'categoryId',
-      header: 'Category',
-      cell: ({ row }) => (
-        <span className="text-gray-700">
-          {row.original.categoryId || '-'}
-        </span>
-      ),
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
       accessorKey: 'createdAt',
@@ -145,11 +144,6 @@ export default function ArticleListPage() {
       cell: ({ row }) => (
         <span className="text-gray-700">{formatDateTime(row.original.createdAt)}</span>
       ),
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
       id: 'actions',
@@ -164,7 +158,7 @@ export default function ArticleListPage() {
   ], [handleEdit, handleDeleteClick])
 
   // Sortable columns
-  const sortableColumns = ['title', 'author', 'status', 'createdAt']
+  const sortableColumns = ['name', 'status', 'createdAt']
 
   return (
     <div className="space-y-4">
@@ -187,10 +181,10 @@ export default function ArticleListPage() {
       />
 
       {/* Create/Edit Modal */}
-      <ArticleFormModal
+      <CategoryFormModal
         isOpen={showFormModal}
         onClose={closeFormModal}
-        article={selectedArticle}
+        category={selectedCategory}
         onSuccess={closeFormModal}
       />
     </div>
