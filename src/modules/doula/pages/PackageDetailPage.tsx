@@ -28,7 +28,7 @@ export default function PackagePage() {
         <ToastContainer />
         <div className="w-full h-screen py-2 px-5 bg-gray-100">
             <div className="flex justify-between px-2 py-4">
-                <button className="cursor-pointer flex items-center" onClick={() => nav(`/doula-management`)}><svg width="20px" height="20px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" >
+                <button className="cursor-pointer flex items-center" onClick={() => nav(-1)}><svg width="20px" height="20px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" >
 
                     <path d="M0 0h48v48H0z" fill="none" />
                     <g id="Shopicon">

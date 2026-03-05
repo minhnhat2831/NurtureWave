@@ -10,6 +10,8 @@ import AdminPage from "@/modules/admin/page/AdminPage";
 import DoulaPage from "@/modules/doula/pages/DoulaPage";
 import DoulaViewPage from "@/modules/doula/pages/DoulaViewPage";
 import PackagePage from "@/modules/doula/pages/PackageDetailPage";
+import ClientPage from "@/modules/client/page/ClientPage";
+import ClientViewPage from "@/modules/client/page/ClientViewPage";
 
 function App() {
   return (
@@ -86,10 +88,19 @@ function App() {
         }>
         </Route>
 
+        <Route path="/client-management/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <ClientViewPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
         <Route path="/client-management" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Client Management" />
+              <ClientPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

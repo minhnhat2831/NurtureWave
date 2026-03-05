@@ -1,7 +1,7 @@
 //Change date into  dd/mm/yyyy
 export const formatDate = (dateStr: string | undefined | null) => {
     if (!dateStr) {
-        return '';
+        return '-';
     }
     const dateObj = new Date(dateStr);
     const formattedDate = dateObj.toLocaleDateString('en-GB', {

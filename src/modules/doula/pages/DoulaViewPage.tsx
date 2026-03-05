@@ -33,7 +33,6 @@ export default function DoulaViewPage() {
     const handleEdit = () => {
         setTypeMode("edit")
         setOpen(true)
-        return openForm
     }
 
     const openForm = () => {
@@ -54,7 +53,7 @@ export default function DoulaViewPage() {
     return (<>
         <ToastContainer />
         <div className="flex justify-between px-2 py-4">
-            <button className="cursor-pointer flex items-center" onClick={() => nav("/doula-management")}>
+            <button className="cursor-pointer flex items-center" onClick={() => nav(-1)}>
                 <svg width="20px" height="20px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" >
 
                     <path d="M0 0h48v48H0z" fill="none" />
