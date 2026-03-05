@@ -14,6 +14,7 @@ export default function useDoula() {
             page,
             limit,
             search,
+            sort,
             setPage,
             setLimit,
             setSearch,
@@ -47,6 +48,7 @@ export default function useDoula() {
             setPage,
             setLimit,
             setSort,
+            sort
         }
     }
 

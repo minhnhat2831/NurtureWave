@@ -18,6 +18,7 @@ export default function useAdmin() {
             setLimit,
             setSearch,
             setSort,
+            sort,
             isLoading,
         } = useTableManager({
             queryKey: ["admins"],
@@ -47,6 +48,7 @@ export default function useAdmin() {
             setPage,
             setLimit,
             setSort,
+            sort
         }
     }
 

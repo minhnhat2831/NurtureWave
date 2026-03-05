@@ -22,6 +22,8 @@ export default function AdminPage() {
         search,
         setLimit,
         setPage,
+        setSort,
+        sort,
         setSearch } = useGetAllAdmin()
 
     useEffect(() => {
@@ -63,6 +65,7 @@ export default function AdminPage() {
                 return null
         }
     }
+    const sortTableColumns = ['username', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt']
 
     return (<>
         <ToastContainer />
@@ -76,6 +79,9 @@ export default function AdminPage() {
             totalItems={metadata?.totalCount || 0}
             onPageChange={(newPageIndex) => setPage(newPageIndex + 1)}
             onPageSizeChange={setLimit}
+            currentSort={sort}
+            onSortChange={setSort}
+            sortableColumns={sortTableColumns}
         />
         {open && renderModal()}
     </>)

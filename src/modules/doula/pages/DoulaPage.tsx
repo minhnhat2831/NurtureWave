@@ -9,7 +9,7 @@ import DoulaEdit from "../components/modal/DoulaEdit"
 import DoulaDelete from "../components/modal/DoulaDelete"
 import useDoula from "../hooks/useDoula"
 
-export default function DoulaPage(){
+export default function DoulaPage() {
     const { useGetAllDoula } = useDoula()
     const { typeMode, open } = useDoulaStore()
     const { setHeaderContent } = useHeader()
@@ -22,6 +22,8 @@ export default function DoulaPage(){
         search,
         setLimit,
         setPage,
+        setSort,
+        sort,
         setSearch } = useGetAllDoula()
 
     useEffect(() => {
@@ -45,14 +47,16 @@ export default function DoulaPage(){
     const renderModal = () => {
         if (!open) return null
         switch (typeMode) {
-            case "edit": 
+            case "edit":
                 return <DoulaEdit />
             case "delete":
                 return <DoulaDelete />
-            default : 
+            default:
                 return null
-        }       
+        }
     }
+
+    const sortTableColumns = ['user.fullName', 'user.lastName', 'user.email', 'status', 'createdAt']
 
     return (<>
         <ToastContainer />
@@ -66,6 +70,9 @@ export default function DoulaPage(){
             totalItems={metadata?.totalCount || 0}
             onPageChange={(newPageIndex) => setPage(newPageIndex + 1)}
             onPageSizeChange={setLimit}
+            currentSort={sort}
+            onSortChange={setSort}
+            sortableColumns={sortTableColumns}
         />
         {open && renderModal()}
     </>)
