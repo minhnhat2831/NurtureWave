@@ -6,6 +6,9 @@ import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
 import ProtectedRoute from "@/components/context/ProtectedRoute";
 import AdminPage from "@/modules/admin/page/AdminPage";
+import DoulaPage from "@/modules/doula/pages/DoulaPage";
+import DoulaViewPage from "@/modules/doula/pages/DoulaViewPage";
+import PackagePage from "@/modules/doula/pages/PackageDetailPage";
 
 function App() {
   return (
@@ -55,10 +58,28 @@ function App() {
         }>
         </Route>
 
+        <Route path="/doula-management/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <DoulaViewPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
         <Route path="/doula-management" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Doula Management" />
+              <DoulaPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
+        <Route path="/package/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <PackagePage />
             </AdminLayout>
           </ProtectedRoute>
         }>
