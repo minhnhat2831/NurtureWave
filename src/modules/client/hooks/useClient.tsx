@@ -1,13 +1,11 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import type { adminListItem, editAdminUser } from "../schema/AdminSchema.type"
-import { getAdminDetail, getAllAdmin, createAdmin, deleteAdmin, editAdmin } from "../api/Api"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { deleteClient, editClient, getAllClient, getClientDetail } from "../api/api"
 import { toast } from "react-toastify"
-import { useMutation } from "@tanstack/react-query"
 import { useTableManager } from "@/hooks/useTableManager"
-
-export default function useAdmin() {
+import type { clientListItem, clientRequest } from "../schema/types/ClientSchema.type"
+export default function useClient() {
     const queryClient = useQueryClient()
-    const useGetAllAdmin = () => {
+    const useGetAllClient = () => {
         const {
             data,
             metadata,
@@ -21,14 +19,15 @@ export default function useAdmin() {
             sort,
             isLoading,
         } = useTableManager({
-            queryKey: ["admins"],
+            queryKey: ["users"],
             queryFn: async ({ page, limit, search, sort }) => {
                 try {
-                    return await getAllAdmin({
+                    return await getAllClient({
                         page,
                         limit,
                         search,
                         sort,
+                        embed : "address.fullAddress"
                     })
                 } catch (err: any) {
                     toast.error(err.response?.data?.message)
@@ -52,12 +51,12 @@ export default function useAdmin() {
         }
     }
 
-    const useAdminDetail = (id?: string) => {
-        const query = useQuery<adminListItem>({
-            queryKey: [`admins`, id],
+    const useClientDetail = (id?: string) => {
+        const query = useQuery<clientListItem>({
+            queryKey: [`users`, id],
             queryFn: async () => {
                 try {
-                    const result = await getAdminDetail(id)
+                    const result = await getClientDetail(id)
                     return result.data
                 } catch (err: any) {
                     toast.error(`${err.response?.data?.message}`)
@@ -73,37 +72,28 @@ export default function useAdmin() {
         }
     }
 
-    const useCreateAdmin = useMutation({
-        mutationFn: createAdmin,
+    const useEditClient = useMutation({
+        mutationFn: ({ data, id }: { data: clientRequest, id: string }) =>
+            editClient(id, data),
         onSuccess: (res) => {
             toast.success(res.message)
-            queryClient.invalidateQueries({ queryKey: ["admins"] })
+            queryClient.invalidateQueries({ queryKey: ["users"] })
         },
     })
 
-    const useEditAdmin = useMutation({
-        mutationFn: ({ data, id }: { data: editAdminUser, id: string }) =>
-            editAdmin(data, id),
-        onSuccess: (res) => {
-            toast.success(res.message)
-            queryClient.invalidateQueries({ queryKey: ["admins"] })
-        },
-    })
-
-    const useDeleteAdmin = useMutation({
+    const useDeleteClient = useMutation({
         mutationFn: ({ id }: { id?: string }) =>
-            deleteAdmin(id),
+            deleteClient(id),
         onSuccess: (res) => {
             toast.success(res.message)
-            queryClient.invalidateQueries({ queryKey: ["admins"] })
+            queryClient.invalidateQueries({ queryKey: ["users"] })
         },
     })
 
     return {
-        useGetAllAdmin,
-        useAdminDetail,
-        useCreateAdmin,
-        useEditAdmin,
-        useDeleteAdmin
+        useGetAllClient,
+        useClientDetail,
+        useEditClient,
+        useDeleteClient
     }
 }

@@ -18,6 +18,11 @@ export interface DataTableProps<TData> {
   onPageChange: (page: number) => void;
   onPageSizeChange:(pageSize: number) => void;
   
+  // Sorting
+  currentSort?: string;
+  onSortChange?: (sort: string) => void;
+  sortableColumns?: string[];
+  
   // States
   isLoading?: boolean;
   error?: string;
@@ -35,6 +40,9 @@ export const DataTable = <TData,>({
   totalItems,
   onPageChange,
   onPageSizeChange,
+  currentSort,
+  onSortChange,
+  sortableColumns = [],
   isLoading = false,
   error,
   className,
@@ -47,6 +55,31 @@ export const DataTable = <TData,>({
     manualPagination: true,
     pageCount: totalPages,
   });
+
+  // Parse current sort: "columnName" or "-columnName" for desc
+  const getSortState = (columnKey: string) => {
+    if (!currentSort) return null
+    if (currentSort === columnKey) return 'asc'
+    if (currentSort === `-${columnKey}`) return 'desc'
+    return null
+  }
+
+  const handleSort = (columnKey: string) => {
+    if (!onSortChange || !sortableColumns.includes(columnKey)) return
+    
+    const currentState = getSortState(columnKey)
+    let newSort: string
+    
+    if (currentState === 'asc') {
+      newSort = `-${columnKey}` // Switch to desc
+    } else if (currentState === 'desc') {
+      newSort = 'createdAt' // Reset to default
+    } else {
+      newSort = columnKey // Set to asc
+    }
+    
+    onSortChange(newSort)
+  }
 
   if (error) {
     return (
@@ -67,16 +100,33 @@ export const DataTable = <TData,>({
           <thead className="bg-gray-50 border-b border-gray-200">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="px-6 py-3 text-left text-sm font-normal text-gray-700"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const columnKey = header.column.id
+                  const isSortable = sortableColumns.includes(columnKey)
+                  const sortState = getSortState(columnKey)
+                  
+                  return (
+                    <th
+                      key={header.id}
+                      className={cn(
+                        "px-6 py-3 text-left text-sm font-normal text-gray-700",
+                        isSortable && "cursor-pointer select-none hover:bg-gray-100"
+                      )}
+                      onClick={() => isSortable && handleSort(columnKey)}
+                    >
+                      <div className="flex items-center gap-2">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                        {isSortable && (
+                          <span className="text-gray-400">
+                            {sortState === 'asc' ? '↑' : sortState === 'desc' ? '↓' : '↕'}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                  )
+                })}
               </tr>
             ))}
           </thead>

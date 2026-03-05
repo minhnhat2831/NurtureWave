@@ -1,30 +1,30 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import type { adminListItem, editAdminUser } from "../schema/AdminSchema.type"
-import { getAdminDetail, getAllAdmin, createAdmin, deleteAdmin, editAdmin } from "../api/Api"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import type { doulaDetail, doulaRequest } from "../schema/types/DoulaSchema.type"
+import { deleteDoula, editDoula, getAllDoula, getDoulaDetail } from "../api/api"
 import { toast } from "react-toastify"
-import { useMutation } from "@tanstack/react-query"
 import { useTableManager } from "@/hooks/useTableManager"
 
-export default function useAdmin() {
+export default function useDoula() {
     const queryClient = useQueryClient()
-    const useGetAllAdmin = () => {
+
+    const useGetAllDoula = () => {
         const {
             data,
             metadata,
             page,
             limit,
             search,
+            sort,
             setPage,
             setLimit,
             setSearch,
             setSort,
-            sort,
             isLoading,
         } = useTableManager({
-            queryKey: ["admins"],
+            queryKey: ["doulas"],
             queryFn: async ({ page, limit, search, sort }) => {
                 try {
-                    return await getAllAdmin({
+                    return await getAllDoula({
                         page,
                         limit,
                         search,
@@ -52,12 +52,12 @@ export default function useAdmin() {
         }
     }
 
-    const useAdminDetail = (id?: string) => {
-        const query = useQuery<adminListItem>({
-            queryKey: [`admins`, id],
+    const useDoulaDetail = (id?: string) => {
+        const query = useQuery<doulaDetail>({
+            queryKey: [`doulas`, id],
             queryFn: async () => {
                 try {
-                    const result = await getAdminDetail(id)
+                    const result = await getDoulaDetail(id)
                     return result.data
                 } catch (err: any) {
                     toast.error(`${err.response?.data?.message}`)
@@ -73,37 +73,28 @@ export default function useAdmin() {
         }
     }
 
-    const useCreateAdmin = useMutation({
-        mutationFn: createAdmin,
+    const useEditDoula = useMutation({
+        mutationFn: ({ data, id }: { data: doulaRequest, id: string }) =>
+            editDoula(id, data),
         onSuccess: (res) => {
             toast.success(res.message)
-            queryClient.invalidateQueries({ queryKey: ["admins"] })
+            queryClient.invalidateQueries({ queryKey: ["doulas"] })
         },
     })
 
-    const useEditAdmin = useMutation({
-        mutationFn: ({ data, id }: { data: editAdminUser, id: string }) =>
-            editAdmin(data, id),
-        onSuccess: (res) => {
-            toast.success(res.message)
-            queryClient.invalidateQueries({ queryKey: ["admins"] })
-        },
-    })
-
-    const useDeleteAdmin = useMutation({
+    const useDeleteDoula = useMutation({
         mutationFn: ({ id }: { id?: string }) =>
-            deleteAdmin(id),
+            deleteDoula(id),
         onSuccess: (res) => {
             toast.success(res.message)
-            queryClient.invalidateQueries({ queryKey: ["admins"] })
+            queryClient.invalidateQueries({ queryKey: ["doulas"] })
         },
     })
 
     return {
-        useGetAllAdmin,
-        useAdminDetail,
-        useCreateAdmin,
-        useEditAdmin,
-        useDeleteAdmin
+        useGetAllDoula,
+        useDoulaDetail,
+        useEditDoula,
+        useDeleteDoula
     }
 }
