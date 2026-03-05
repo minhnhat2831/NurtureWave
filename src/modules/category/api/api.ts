@@ -8,8 +8,11 @@ import type {
   CategoryQueryParams,
 } from "../schema/CategorySchema.type";
 
-/** 
- * @param params 
+/**
+/**
+ * Get list of categories with pagination, search, filter, sort
+ * 
+ * @param params
  */
 export const getCategories = async (
   params?: CategoryQueryParams

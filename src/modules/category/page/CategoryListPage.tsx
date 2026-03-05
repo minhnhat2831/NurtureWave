@@ -29,9 +29,11 @@ export default function CategoryListPage() {
     page,
     limit,
     search,
+    sort,
     setPage,
     setLimit,
     setSearch,
+    setSort,
     isLoading,
   } = useCategoryList()
 
@@ -155,6 +157,9 @@ export default function CategoryListPage() {
     },
   ], [handleEdit, handleDeleteClick])
 
+  // Sortable columns
+  const sortableColumns = ['name', 'status', 'createdAt']
+
   return (
     <div className="space-y-4">
       <ToastContainer />
@@ -169,6 +174,9 @@ export default function CategoryListPage() {
         totalItems={metadata?.totalCount || 0}
         onPageChange={(newPage) => setPage(newPage + 1)}
         onPageSizeChange={setLimit}
+        currentSort={sort}
+        onSortChange={setSort}
+        sortableColumns={sortableColumns}
         isLoading={isLoading}
       />
 
