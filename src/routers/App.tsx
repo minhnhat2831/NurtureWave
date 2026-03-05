@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router"
 import LoginPage from "../modules/auth/page/LoginPage"
 import ArticleListPage from "../modules/article/page/ArticleListPage"
+import CategoryListPage from "../modules/category/page/CategoryListPage"
 import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
@@ -81,10 +82,11 @@ function App() {
         }>
         </Route>
 
-        <Route path="/category" element={
+        {/* Category Module */}
+        <Route path="/admin/categories" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Category" />
+              <CategoryListPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

@@ -35,7 +35,7 @@ const menuItems: MenuItem[] = [
   },
   { id: 'article', label: 'Article', icon: 'file-text', path: '/admin/articles' },
   { id: 'pd-session', label: 'PD Session', icon: 'calendar', path: '/pd-session' },
-  { id: 'category', label: 'Category', icon: 'grid', path: '/category' },
+  { id: 'category', label: 'Category', icon: 'grid', path: '/admin/categories' },
   { id: 'subscriptions', label: 'Subscriptions', icon: 'package', path: '/subscriptions' },
   { id: 'voucher', label: 'Voucher', icon: 'ticket', path: '/voucher' },
   { id: 'help-documents', label: 'Help Documents', icon: 'file', path: '/help-documents' },
