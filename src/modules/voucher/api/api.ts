@@ -6,6 +6,10 @@ import {
   type VoucherQueryParams,
   type CreateVoucherData,
 } from '../schema/VoucherSchema.type';
+import {
+  voucherListResponseSchema,
+  voucherDetailResponseSchema
+} from '../schema/VoucherSchema';
 
 /**
  * Get all vouchers with pagination, search, sort, and filters
