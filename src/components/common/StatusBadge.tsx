@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
 
-export type StatusType ='draft' | 'published' | 'unpublished' | 'show' | 'hide' | 'active' | 'inactive';
+export type StatusType ='draft' | 'published' | 'unpublished' | 'show' | 'hide' | 'active' | 'inactive' | 'expired';
 
 export interface StatusBadgeProps {
   status: StatusType;
@@ -35,6 +35,10 @@ const statusConfig: Record<StatusType, { label: string; dotColor: string }> = {
   inactive: {
     label: 'Inactive',
     dotColor: 'bg-gray-500',
+  },
+  expired : {
+    label: 'Expired',
+    dotColor: 'bg-red-500',
   },
 };
 

@@ -7,6 +7,10 @@ import type {
   CategoryDetailResponse,
   CategoryQueryParams,
 } from "../schema/CategorySchema.type";
+import {
+  categoryListResponseSchema,
+  categoryDetailResponseSchema
+} from "../schema/CategorySchema";
 
 /**
 /**
@@ -21,7 +25,8 @@ export const getCategories = async (
     API_ENDPOINTS.API_ADMIN_CATEGORIES,
     { params }
   );
-  return res.data;
+  // Runtime validation
+  return categoryListResponseSchema.parse(res.data);
 };
 
 /**
@@ -36,7 +41,8 @@ export const createCategory = async (
     API_ENDPOINTS.API_ADMIN_CATEGORIES,
     payload
   );
-  return res.data;
+  // Runtime validation
+  return categoryDetailResponseSchema.parse(res.data);
 };
 
 /**
@@ -51,7 +57,8 @@ export const updateCategory = async (
     API_ENDPOINTS.API_ADMIN_CATEGORIES_ID(id),
     payload
   );
-  return res.data;
+  // Runtime validation
+  return categoryDetailResponseSchema.parse(res.data);
 };
 
 /**

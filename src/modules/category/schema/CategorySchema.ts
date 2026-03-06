@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { StringRequired, StringNullAndOptional, ParamsSchema, StatusRequired } from '@/constants/SchemaConstants'
+import { StringRequired, StringNullAndOptional, ParamsSchema, StatusRequired, Metadata } from '@/constants/SchemaConstants'
 
 // 1. ITEM SCHEMA - Single category object
 export const categoryItemSchema = z.object({
@@ -35,13 +35,7 @@ export const editCategorySchema = z.object({
 export const categoryListResponseSchema = z.object({
   message: z.string(),
   data: z.array(categoryItemSchema),
-  metadata: z.object({
-    page: z.number(),
-    limit: z.number(),
-    totalPages: z.number(),
-    totalCount: z.number(),
-    hasNextPage: z.boolean()
-  }).optional(),
+  metadata: Metadata,
 })
 
 export const categoryDetailResponseSchema = z.object({

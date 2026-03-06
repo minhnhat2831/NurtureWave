@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router"
 import LoginPage from "../modules/auth/page/LoginPage"
 import ArticleListPage from "../modules/article/page/ArticleListPage"
 import CategoryListPage from "../modules/category/page/CategoryListPage"
+import VoucherListPage from "../modules/voucher/page/VoucherListPage"
 import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
@@ -137,7 +138,7 @@ function App() {
         <Route path="/voucher" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Voucher" />
+              <VoucherListPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

@@ -11,10 +11,6 @@ export const ARTICLE_STATUS_OPTIONS = [
   { value: 'unpublished', label: 'Unpublished' },
 ]
 
-/**
- * Hook for Article Form Options (Categories, Status)
- * Shared between Create and Edit forms
- */
 export const useArticleFormOptions = () => {
   const { data: categoriesData, isLoading: loadingCategories } = useQuery({
     queryKey: ['categories'],

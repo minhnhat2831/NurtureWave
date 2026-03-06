@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
+import { useCallback, useState, useEffect, useMemo } from 'react'
+import { useDebouncedCallback } from 'use-debounce'
 import { useQueryParams } from './useQueryParams'
 import type { MetadataType, ParamsType } from '@/constants/SchemaConstants'
 
@@ -21,10 +22,39 @@ export const useTableManager = <TData>({
 
   const page = params.page ?? 1
   const limit = params.limit ?? defaultLimit
-  const search = params.search ?? undefined
+  const search = params.search ?? ''
   const sort = params.sort ?? "createdAt"
 
-  const offset = (page - 1) * limit
+  // Local state for search input to avoid lag during typing
+  const [searchInput, setSearchInput] = useState(search)
+
+  // Memoize offset calculation
+  const offset = useMemo(() => (page - 1) * limit, [page, limit])
+
+  // Debounced search update to URL params with dependencies
+  const debouncedSetSearch = useDebouncedCallback(
+    (value: string) => {
+      const trimmedValue = value.trim()
+      setParams({ 
+        search: trimmedValue || undefined, 
+        page: 1 
+      })
+    }, 
+    500,
+    { maxWait: 2000 } // Force trigger after 2s even if still typing
+  )
+
+  // Sync searchInput with URL param on mount or when URL changes externally
+  useEffect(() => {
+    setSearchInput(search)
+  }, [search])
+
+  // Cleanup pending debounced calls on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSetSearch.cancel()
+    }
+  }, [debouncedSetSearch])
 
   const query = useQuery({
     queryKey: [...queryKey, page, limit, search, sort],
@@ -33,9 +63,10 @@ export const useTableManager = <TData>({
         page,
         limit,
         offset,
-        search ,
+        search: search || undefined,
         sort,
       }),
+    placeholderData: undefined,
   })
 
   const metadata = query.data?.metadata
@@ -50,8 +81,9 @@ export const useTableManager = <TData>({
   }, [setParams])
 
   const setSearch = useCallback((value: string) => {
-    setParams({ search: value, page: 1 })
-  }, [setParams])
+    setSearchInput(value) // Update local state immediately
+    debouncedSetSearch(value) // Update URL params with debounce
+  }, [debouncedSetSearch])
 
   const setSort = useCallback((value: string) => {
     setParams({ sort: value })
@@ -64,12 +96,15 @@ export const useTableManager = <TData>({
 
     page,
     limit,
-    search,
+    search: searchInput,
     sort,
 
     setPage,
     setLimit,
     setSearch,
     setSort,
+    
+    // Show loading skeleton during initial load and data fetching (sort, filter, etc)
+    isLoading: query.isLoading || query.isFetching,
   }
 }
