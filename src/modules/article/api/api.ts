@@ -7,10 +7,6 @@ import type {
   ArticleDetailResponse,
   ArticleQueryParams,
 } from "../schema/ArticleSchema.type";
-import { 
-  articleListResponseSchema, 
-  articleDetailResponseSchema 
-} from "../schema/ArticleSchema";
 
 
 /**
@@ -25,8 +21,7 @@ export const getArticles = async (
     API_ENDPOINTS.API_ADMIN_ARTICLES,
     { params }
   );
-  // Runtime validation: Validate API response matches schema
-  return articleListResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -41,8 +36,7 @@ export const getArticleById = async (
   const res = await axiosInstance.get<ArticleDetailResponse>(
     API_ENDPOINTS.API_ADMIN_ARTICLES_ID(id)
   );
-  // Runtime validation
-  return articleDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -56,8 +50,7 @@ export const createArticle = async (
     API_ENDPOINTS.API_ADMIN_ARTICLES,
     payload
   );
-  // Runtime validation
-  return articleDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -72,8 +65,7 @@ export const updateArticle = async (
     API_ENDPOINTS.API_ADMIN_ARTICLES_ID(id),
     payload
   );
-  // Runtime validation
-  return articleDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
