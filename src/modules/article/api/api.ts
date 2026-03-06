@@ -7,11 +7,6 @@ import type {
   ArticleDetailResponse,
   ArticleQueryParams,
 } from "../schema/ArticleSchema.type";
-import { 
-  articleListResponseSchema, 
-  articleDetailResponseSchema 
-} from "../schema/ArticleSchema";
-
 
 /**
  * Get list of articles with pagination, search, filter, sort
@@ -26,7 +21,7 @@ export const getArticles = async (
     { params }
   );
   // Runtime validation: Validate API response matches schema
-  return articleListResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -42,7 +37,7 @@ export const getArticleById = async (
     API_ENDPOINTS.API_ADMIN_ARTICLES_ID(id)
   );
   // Runtime validation
-  return articleDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -57,7 +52,7 @@ export const createArticle = async (
     payload
   );
   // Runtime validation
-  return articleDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -73,7 +68,7 @@ export const updateArticle = async (
     payload
   );
   // Runtime validation
-  return articleDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**

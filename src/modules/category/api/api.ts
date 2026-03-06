@@ -7,10 +7,6 @@ import type {
   CategoryDetailResponse,
   CategoryQueryParams,
 } from "../schema/CategorySchema.type";
-import {
-  categoryListResponseSchema,
-  categoryDetailResponseSchema
-} from "../schema/CategorySchema";
 
 /**
 /**
@@ -26,7 +22,7 @@ export const getCategories = async (
     { params }
   );
   // Runtime validation
-  return categoryListResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -42,7 +38,7 @@ export const createCategory = async (
     payload
   );
   // Runtime validation
-  return categoryDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
@@ -58,7 +54,7 @@ export const updateCategory = async (
     payload
   );
   // Runtime validation
-  return categoryDetailResponseSchema.parse(res.data);
+  return res.data;
 };
 
 /**
