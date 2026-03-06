@@ -1,3 +1,13 @@
+import { jwtDecode } from 'jwt-decode'
+
+interface MyTokenPayload {
+    id: string
+    username: string
+    email: string
+    firstName: string
+    lastName: string
+}
+
 export default function useAuthContext() {
 
     function isAuthenticate() {
@@ -10,9 +20,12 @@ export default function useAuthContext() {
     }
 
     function userData() {
-        const adminData = localStorage.getItem("admin")
-        const admin = adminData ? JSON.parse(adminData) : null
-        return admin
+        //check valid in localStorage
+        const token = localStorage.getItem("accessToken");
+        if (!token) return null
+
+        const decoded = jwtDecode<MyTokenPayload>(token)
+        return decoded?.username
     }
 
     function logout() {
