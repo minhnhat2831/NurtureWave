@@ -24,7 +24,7 @@ export default function useLoginForm() {
             const res = await getLogin(data);
 
             const { accessToken, refreshToken } = res.data.tokens;
-            localStorage.setItem("admin", JSON.stringify(res.data.admin.username))
+
             //Lưu accessToken và refreshToken
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", refreshToken);
