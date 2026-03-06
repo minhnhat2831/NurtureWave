@@ -1,8 +1,9 @@
-import { Route, Routes } from "react-router"
+import { Route, Routes, Navigate } from "react-router"
 import LoginPage from "../modules/auth/page/LoginPage"
 import ArticleListPage from "../modules/article/page/ArticleListPage"
 import CategoryListPage from "../modules/category/page/CategoryListPage"
 import VoucherListPage from "../modules/voucher/page/VoucherListPage"
+import VoucherDetailPage from "../modules/voucher/page/VoucherDetailPage"
 import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
@@ -135,10 +136,22 @@ function App() {
         }>
         </Route>
 
-        <Route path="/voucher" element={
+        {/* Redirect old voucher route */}
+        <Route path="/voucher" element={<Navigate to="/vouchers" replace />} />
+
+        <Route path="/vouchers" element={
           <ProtectedRoute>
             <AdminLayout>
               <VoucherListPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
+        <Route path="/vouchers/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <VoucherDetailPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

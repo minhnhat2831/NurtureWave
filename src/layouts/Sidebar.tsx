@@ -37,7 +37,7 @@ const menuItems: MenuItem[] = [
   { id: 'pd-session', label: 'PD Session', icon: 'calendar', path: '/pd-session' },
   { id: 'category', label: 'Category', icon: 'grid', path: '/admin/categories' },
   { id: 'subscriptions', label: 'Subscriptions', icon: 'package', path: '/subscriptions' },
-  { id: 'voucher', label: 'Voucher', icon: 'ticket', path: '/voucher' },
+  { id: 'voucher', label: 'Voucher', icon: 'ticket', path: '/vouchers' },
   { id: 'help-documents', label: 'Help Documents', icon: 'file', path: '/help-documents' },
   { id: 'search-settings', label: 'Search Settings', icon: 'search', path: '/search-settings' },
 ];
@@ -60,10 +60,16 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
   const getActiveInfo = () => {
     const path = location.pathname;
     for (const item of menuItems) {
+      // Check exact match first
       if (item.path === path) return { activeItem: item.id, parentId: null };
+      // Check if current path starts with menu item path (for child routes like /vouchers/:id)
+      if (item.path && path.startsWith(item.path + '/')) return { activeItem: item.id, parentId: null };
+      
       if (item.children) {
         for (const child of item.children) {
           if (child.path === path) return { activeItem: child.id, parentId: item.id };
+          // Check child route paths
+          if (child.path && path.startsWith(child.path + '/')) return { activeItem: child.id, parentId: item.id };
         }
       }
     }
