@@ -26,7 +26,7 @@ export const useCreateCategoryForm = ({ onSuccess }: UseCreateCategoryFormProps)
       name: '',
       picture: '',
       status: 'active',
-    }
+    } as Partial<CreateCategoryData>
   })
 
   const mutation = useMutation({
@@ -54,10 +54,7 @@ export const useCreateCategoryForm = ({ onSuccess }: UseCreateCategoryFormProps)
   }
 }
 
-/**
- * Hook for Category Edit Form
- * Usage: const { method, onSubmit, isLoading } = useEditCategoryForm({ category, onSuccess: () => closeModal() })
- */
+
 interface UseEditCategoryFormProps {
   category: Category
   onSuccess?: () => void

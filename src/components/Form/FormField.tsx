@@ -81,9 +81,12 @@ export function FormSelect<T extends FieldValues>({
       control={control}
       render={({ field, fieldState }) => (
         <BaseSelect
-          {...field}
-          error={fieldState.error?.message}
           {...props}
+          name={field.name}
+          value={field.value}
+          onChange={(value) => field.onChange(value)}
+          onBlur={field.onBlur}
+          error={fieldState.error?.message}
         />
       )}
     />
