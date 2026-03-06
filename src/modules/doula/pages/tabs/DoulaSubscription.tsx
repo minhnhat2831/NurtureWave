@@ -4,6 +4,7 @@ import { useTransaction } from "../../hooks/useTransaction";
 import { useDoulaSubscription } from "../../hooks/useDoulaSupcription";
 import { DataTable } from "@/components/Table";
 import { TransactionColumns } from "../../components/table/TransactionColumn";
+import { Icons } from "@/components/common";
 
 
 export default function DoulaSubscription() {
@@ -26,9 +27,7 @@ export default function DoulaSubscription() {
                     <div className="border rounded-xl w-100 p-4 mt-5 bg-gray-100 shadow-2xl">
                         <div className="flex justify-between">
                             <div className="flex items-center">
-                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M18 2H6v2h12V2zM4 6h16v2H4V6zm-2 4h20v12H2V10zm18 10v-8H4v8h16z" fill="#000000" />
-                                </svg>
+                                <Icons.subscription />
                                 <p>{subscription?.subscription.name}</p>
                             </div>
                             <p className={`${subscription?.status === "cancelled" ? "text-xl font-bold text-red-500" : "text-xl font-bold text-green-500"}`}>{subscription?.status}</p>

@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { cn } from '@/lib/cn';
+import { Icons } from './Icons';
 
 export interface ImageUploaderProps {
   label?: string;
@@ -7,14 +8,14 @@ export interface ImageUploaderProps {
   helperText?: string;
   containerClassName?: string;
   labelClassName?: string;
-  
+
   // Value & onChange
   value?: string; // URL or base64
   onChange?: (file: File | null, preview: string | null, uploadedUrl?: string | null) => void;
-  
+
   // Upload to server (S3, etc)
   onUpload?: (file: File) => Promise<string>; // Returns uploaded URL
-  
+
   // Settings
   accept?: string;
   maxSize?: number; // in MB
@@ -121,9 +122,7 @@ export const ImageUploader = ({
               onClick={handleRemove}
               className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow-md transition-colors cursor-pointer"
             >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <Icons.closeButton />
             </button>
           )}
         </div>
@@ -142,10 +141,7 @@ export const ImageUploader = ({
       {/* Upload Status */}
       {uploading && (
         <p className="mt-1 text-xs text-blue-600 flex items-center gap-1">
-          <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
+          <Icons.loadingSpin style='animate-spin' />
           Uploading...
         </p>
       )}
