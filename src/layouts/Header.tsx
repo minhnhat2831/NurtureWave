@@ -12,7 +12,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
       {/* Mobile Menu Toggle */}
       <button
         onClick={onMenuClick}
-        className="p-2 rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+        className="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer lg:hidden"
         aria-label="Toggle menu"
       >
         <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

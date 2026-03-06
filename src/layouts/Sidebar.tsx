@@ -174,7 +174,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                   }
                 }}
                 className={cn(
-                  'w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors mx-2 rounded-lg',
+                  'w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors mx-2 rounded-lg cursor-pointer',
                   'hover:bg-gray-100',
                   isActive ? 'bg-violet-50 border border-violet-200 font-semibold text-violet-700' : 'text-gray-600'
                 )}
@@ -211,7 +211,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                           }
                         }}
                         className={cn(
-                          'w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors mx-2 rounded-lg',
+                          'w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors mx-2 rounded-lg cursor-pointer',
                           'hover:bg-gray-100',
                           isChildActive 
                             ? 'bg-violet-50 border border-violet-200 font-medium text-violet-700' 
@@ -233,7 +233,7 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
       <div className="relative bg-violet-100">
         <button
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className="w-full flex items-center gap-3 px-4 py-4 hover:bg-violet-200 transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-4 hover:bg-violet-200 transition-colors cursor-pointer"
         >
           <div className="w-8 h-8 rounded-full bg-violet-300 flex items-center justify-center text-violet-700 font-semibold text-sm shrink-0">
             A
@@ -256,11 +256,11 @@ export const Sidebar = ({ isOpen }: SidebarProps) => {
                 openChangePasswordModal();
                 setShowUserMenu(false);
               }}
-              className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
             >
               Change Password
             </button>
-            <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors" onClick={() => {
+            <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => {
               logout();
             }}>
               Logout

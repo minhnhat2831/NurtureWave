@@ -25,6 +25,10 @@ export const API_ENDPOINTS = {
     API_ADMIN_CATEGORIES : '/admins/categories',
     API_ADMIN_CATEGORIES_ID : (id: string) => `/admins/categories/${id}`,
 
+    //Admin vouchers
+    API_ADMIN_VOUCHERS : '/admins/vouchers',
+    API_ADMIN_VOUCHERS_ID : (id: string) => `/admins/vouchers/${id}`,
+
     //Medias - Upload
     API_MEDIAS_SIGNED_URL : '/medias/signed-url',
 }

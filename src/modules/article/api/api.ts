@@ -7,22 +7,16 @@ import type {
   ArticleDetailResponse,
   ArticleQueryParams,
 } from "../schema/ArticleSchema.type";
+import { 
+  articleListResponseSchema, 
+  articleDetailResponseSchema 
+} from "../schema/ArticleSchema";
 
-/**
- * ARTICLE API LAYER
- * All API calls for Article CRUD operations
- */
 
 /**
  * Get list of articles with pagination, search, filter, sort
  * 
- * @param params - Query parameters
- * - page, limit, offset: Pagination
- * - search: Search in title, author, category
- * - sort: Sort by id, title, status, author, createdAt, updatedAt, category.name
- * - f_status: Filter by status (draft, published, unpublished)
- * - f_type: Filter by type (article, pd)
- * - f_categoryId: Filter by category UUID
+ * @param params 
  */
 export const getArticles = async (
   params?: ArticleQueryParams
@@ -31,7 +25,8 @@ export const getArticles = async (
     API_ENDPOINTS.API_ADMIN_ARTICLES,
     { params }
   );
-  return res.data;
+  // Runtime validation: Validate API response matches schema
+  return articleListResponseSchema.parse(res.data);
 };
 
 /**
@@ -46,11 +41,11 @@ export const getArticleById = async (
   const res = await axiosInstance.get<ArticleDetailResponse>(
     API_ENDPOINTS.API_ADMIN_ARTICLES_ID(id)
   );
-  return res.data;
+  // Runtime validation
+  return articleDetailResponseSchema.parse(res.data);
 };
 
 /**
- * Create new article
  * 
  * @param payload - Article data including author field
  */
@@ -61,13 +56,11 @@ export const createArticle = async (
     API_ENDPOINTS.API_ADMIN_ARTICLES,
     payload
   );
-  return res.data;
+  // Runtime validation
+  return articleDetailResponseSchema.parse(res.data);
 };
 
 /**
- * Update existing article
- * Note: Does NOT include author field in payload (per API spec)
- * 
  * @param id - Article UUID
  * @param payload - Article data WITHOUT author field
  */
@@ -79,7 +72,8 @@ export const updateArticle = async (
     API_ENDPOINTS.API_ADMIN_ARTICLES_ID(id),
     payload
   );
-  return res.data;
+  // Runtime validation
+  return articleDetailResponseSchema.parse(res.data);
 };
 
 /**

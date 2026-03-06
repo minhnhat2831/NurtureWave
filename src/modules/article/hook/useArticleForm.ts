@@ -58,10 +58,6 @@ export const useCreateArticleForm = ({ onSuccess }: UseCreateArticleFormProps) =
   }
 }
 
-/**
- * Hook for Article Edit Form
- * Usage: const { method, onSubmit, isLoading } = useEditArticleForm({ article, onSuccess: () => closeModal() })
- */
 interface UseEditArticleFormProps {
   article: Article
   onSuccess?: () => void
@@ -103,8 +99,6 @@ export const useEditArticleForm = ({ article, onSuccess }: UseEditArticleFormPro
     // Get original picture URL for comparison
     const originalPictureUrl = getPictureUrl(article.picture)
     
-    // Only send picture if it's a new URL (different from original)
-    // If picture is unchanged, don't send it to backend
     if (submitData.picture === originalPictureUrl) {
       delete submitData.picture
     }
