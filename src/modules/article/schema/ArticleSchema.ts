@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { StringRequired, StringNullAndOptional, ParamsSchema, NumberRequired, ArticleStatusRequired } from '@/constants/SchemaConstants'
+import { StringRequired, StringNullAndOptional, ParamsSchema, NumberRequired, ArticleStatusRequired, Metadata } from '@/constants/SchemaConstants'
 
 
 export const articleItemSchema = z.object({
@@ -18,14 +18,7 @@ export const articleItemSchema = z.object({
   deletedAt: StringNullAndOptional,
 })
 
-// ============================================
-// 2. FORM SCHEMAS - Create & Edit validation
-// ============================================
 
-/**
- * Schema for CREATE article form
- * Includes author field
- */
 export const createArticleSchema = z.object({
   title: StringRequired,
   content: StringRequired,
@@ -37,10 +30,7 @@ export const createArticleSchema = z.object({
   author: StringRequired,
 })
 
-/**
- * Schema for EDIT article form
- * Does NOT include author field (per API spec)
- */
+
 export const editArticleSchema = z.object({
   title: z.string().optional(),
   content: z.string().optional(),
@@ -61,13 +51,7 @@ export const editArticleSchema = z.object({
 export const articleListResponseSchema = z.object({
   message: z.string(),
   data: z.array(articleItemSchema),
-  metadata: z.object({
-    page: z.number(),
-    limit: z.number(),
-    totalPages: z.number(),
-    totalCount: z.number(),
-    hasNextPage: z.boolean()
-  }).optional(),
+  metadata: Metadata,
 })
 
 /**
