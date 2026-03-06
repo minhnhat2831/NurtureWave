@@ -7,6 +7,12 @@ import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
 import ProtectedRoute from "@/components/context/ProtectedRoute";
+import AdminPage from "@/modules/admin/page/AdminPage";
+import DoulaPage from "@/modules/doula/pages/DoulaPage";
+import DoulaViewPage from "@/modules/doula/pages/DoulaViewPage";
+import PackagePage from "@/modules/doula/pages/PackageDetailPage";
+import ClientPage from "@/modules/client/page/ClientPage";
+import ClientViewPage from "@/modules/client/page/ClientViewPage";
 
 function App() {
   return (
@@ -50,7 +56,16 @@ function App() {
         <Route path="/admin-management" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Admin Management" />
+              <AdminPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
+        <Route path="/doula-management/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <DoulaViewPage />
             </AdminLayout>
           </ProtectedRoute>
         }>
@@ -59,7 +74,25 @@ function App() {
         <Route path="/doula-management" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Doula Management" />
+              <DoulaPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
+        <Route path="/package/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <PackagePage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
+        <Route path="/client-management/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <ClientViewPage />
             </AdminLayout>
           </ProtectedRoute>
         }>
@@ -68,7 +101,7 @@ function App() {
         <Route path="/client-management" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Client Management" />
+              <ClientPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

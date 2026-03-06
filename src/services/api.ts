@@ -29,6 +29,34 @@ export const API_ENDPOINTS = {
     API_ADMIN_VOUCHERS : '/admins/vouchers',
     API_ADMIN_VOUCHERS_ID : (id: string) => `/admins/vouchers/${id}`,
 
+    //Admin doula
+    API_ADMIN_DOULA : '/admins/doulas',
+    API_ADMIN_DOULA_ID : (id? : string) => `/admins/doulas/${id}`,
+
+    //Admin client
+    API_ADMIN_CLIENT : '/admins/users',
+    API_ADMIN_CLIENT_ID : (id? : string) => `/admins/users/${id}`,
+
+    //Doula-subscriptions
+    API_DOULA_ID : (id? : string) => `/admins/doulas/${id}`,
+    API_DOULA_SUBSCRIPTIONS_ID : (id? : string) => `/admins/doula-subscriptions/${id}`,
+
+    //Doula Package
+    API_DOULA_PACKAGE : `/admins/doula-packages`,
+    API_DOULA_PACKAGE_ID : (id? : string) => `/admins/doula-packages/${id}`,
+
+    //review
+    API_DOULA_REVIEW : `/admins/reviews`,
+    API_DOULA_REVIEW_OVERVIEW : `/admins/reviews/overview`,
+
+    //transactions
+    API_TRANSACTIONS : '/admins/transactions',
+    API_TRANSACTIONS_ID : (id? : string) => `/admins/transactions/${id}`,
+
+    //Cares
+    API_CARES : '/admins/cares',
+    API_CARES_ID : (id? : string) => `/admins/cares/${id}`,
+
     //Medias - Upload
     API_MEDIAS_SIGNED_URL : '/medias/signed-url',
 }

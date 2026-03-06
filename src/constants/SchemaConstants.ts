@@ -35,5 +35,22 @@ export const Metadata = z.object({
     hasNextPage: z.boolean()
 })
 
+export const PictureSchema = z.object({
+    id: StringNullAndOptional,
+    uri: z.string().optional(),
+    type: StringNullAndOptional,
+    metadata: z.object({
+      thumb: {
+        uri: StringNullAndOptional,
+        key: StringNullAndOptional
+      },
+      medium: z.object({
+        uri: StringNullAndOptional,
+        key: StringNullAndOptional
+      })
+    }),
+    createdAt: z.string()
+})
+
 export type ParamsType = z.infer<typeof ParamsSchema>
 export type MetadataType = z.infer<typeof Metadata>
