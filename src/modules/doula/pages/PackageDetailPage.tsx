@@ -6,6 +6,7 @@ import { formatDateTime } from "@/utils/formatDateTime";
 import { DataTable } from "@/components/Table";
 import { DoulaPackageDetailColumns } from "../components/table/DoulaPackageDetailColumn";
 import { ToastContainer } from "react-toastify";
+import { Icons } from "@/components/common";
 
 export default function PackagePage() {
     const { id } = useParams<{ id: string | undefined }>()
@@ -28,13 +29,8 @@ export default function PackagePage() {
         <ToastContainer />
         <div className="w-full h-screen py-2 px-5 bg-gray-100">
             <div className="flex justify-between px-2 py-4">
-                <button className="cursor-pointer flex items-center" onClick={() => nav(-1)}><svg width="20px" height="20px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" >
-
-                    <path d="M0 0h48v48H0z" fill="none" />
-                    <g id="Shopicon">
-                        <polygon points="40,22 14.828,22 28.828,8 26,5.172 7.172,24 26,42.828 28.828,40 14.828,26 40,26 	" />
-                    </g>
-                </svg>
+                <button className="cursor-pointer flex items-center" onClick={() => nav(-1)}>
+                <Icons.arrowLeft />
                     Back</button>
             </div>
             <div className="px-2 py-2 bg-white">

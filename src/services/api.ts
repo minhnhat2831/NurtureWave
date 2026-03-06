@@ -57,6 +57,10 @@ export const API_ENDPOINTS = {
     API_CARES : '/admins/cares',
     API_CARES_ID : (id? : string) => `/admins/cares/${id}`,
 
+    //help document
+    API_HELP_DOCUMENT : "/admins/help-documents",
+    API_HELP_DOCUMENT_ID : (id? : string) => `/admins/help-documents/${id}`,
+
     //Medias - Upload
     API_MEDIAS_SIGNED_URL : '/medias/signed-url',
 }

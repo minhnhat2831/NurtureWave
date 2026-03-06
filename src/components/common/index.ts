@@ -23,3 +23,4 @@ export type { ChangePasswordModalProps, ChangePasswordFormData } from './ChangeP
 export { ImageUploader } from './ImageUploader';
 export type { ImageUploaderProps } from './ImageUploader';
 
+export { Icons } from './Icons'

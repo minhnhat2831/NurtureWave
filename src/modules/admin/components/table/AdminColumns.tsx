@@ -6,7 +6,7 @@ import { useAdminStore } from "../../store/useAdminStore"
 export const AdminColumns: ColumnDef<adminListItem>[] = [
     {
         accessorKey: "username",
-        header: "Username",
+        header: "User name",
     },
     {
         accessorKey: "firstName",

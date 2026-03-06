@@ -46,3 +46,4 @@ export const categoryDetailResponseSchema = z.object({
 export const categoryParamsSchema = ParamsSchema.extend({
   f_status: z.enum(['active', 'inactive']).optional(),
 })
+

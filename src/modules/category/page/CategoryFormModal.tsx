@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FormProvider } from 'react-hook-form'
-import { FormInput, FormSelect, Button, ImageUploader, ConfirmModal } from '@/components/common'
+import { FormInput, FormSelect, Button, ImageUploader, ConfirmModal, Icons } from '@/components/common'
 import { useCreateCategoryForm, useEditCategoryForm } from '../hook/useCategoryForm'
 import { CATEGORY_STATUS_OPTIONS } from '../constants/formOptions'
 import { getPictureUrl } from '@/utils/imageHelpers'
@@ -54,9 +54,7 @@ const ModalWrapper = ({
           disabled={isLoading}
           className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded-md transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <Icons.closeButton />
         </button>
       </div>
       {children}
