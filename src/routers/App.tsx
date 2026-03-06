@@ -13,6 +13,8 @@ import DoulaViewPage from "@/modules/doula/pages/DoulaViewPage";
 import PackagePage from "@/modules/doula/pages/PackageDetailPage";
 import ClientPage from "@/modules/client/page/ClientPage";
 import ClientViewPage from "@/modules/client/page/ClientViewPage";
+import HelpDocumnetPage from "@/modules/help-document/page/HelpDocumentPage"
+import SearchSettingPage from "@/modules/search-setting/page/SearchSettingPage"
 
 function App() {
   return (
@@ -147,7 +149,7 @@ function App() {
         <Route path="/help-documents" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Help Documents" />
+              <HelpDocumnetPage />
             </AdminLayout>
           </ProtectedRoute>
         }>
@@ -156,7 +158,7 @@ function App() {
         <Route path="/search-settings" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Search Settings" />
+              <SearchSettingPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

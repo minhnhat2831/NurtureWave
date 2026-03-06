@@ -6,7 +6,6 @@ import { useHeader } from "@/hooks/useHeaderContext";
 import { useClientStore } from "../store/useClientStore";
 import ClientEdit from "../components/modal/ClientEdit";
 import ClientDelete from "../components/modal/ClientDelete";
-import { ToastContainer } from "react-toastify";
 
 export default function ClientPage() {
     const { useGetAllClient } = useClient()
@@ -58,7 +57,6 @@ export default function ClientPage() {
     const sortTableColumns = ['firstName', 'email', 'createdAt', 'startDate', 'endDate']
 
     return (<>
-        <ToastContainer />
         <DataTable
             data={data}
             columns={ClientColumns}

@@ -12,7 +12,6 @@ import DoulaReviews from "./tabs/DoulaReviews";
 import { formatDate } from "@/utils/formatDate";
 import ActiveTab from "../components/ActiveTab";
 import DoulaEdit from "../components/modal/DoulaEdit";
-import { ToastContainer } from "react-toastify";
 
 const TABS = [
     { name: "Information", key: "information" },
@@ -51,7 +50,6 @@ export default function DoulaViewPage() {
     }, [setHeaderContent, id])
 
     return (<>
-        <ToastContainer />
         <div className="flex justify-between px-2 py-4">
             <button className="cursor-pointer flex items-center" onClick={() => nav(-1)}>
                 <Icons.arrowLeft />

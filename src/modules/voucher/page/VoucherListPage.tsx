@@ -12,7 +12,7 @@ import { VoucherFormModal } from './VoucherFormModal';
 import type { Voucher } from '../schema/VoucherSchema.type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteVouchers } from '../api/api';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useHeader } from '@/hooks/useHeaderContext';
 import { formatDateTime } from '@/utils/formatDateTime';
 import { useVoucherModalStore } from '../store/voucherModalStore';
@@ -184,7 +184,6 @@ export default function VoucherListPage() {
 
   return (
     <div className="space-y-4">
-      <ToastContainer />
 
       {/* Data Table */}
       <DataTable

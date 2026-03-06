@@ -52,7 +52,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && (
-          <Icons.Button />
+          <Icons.button />
         )}
         {children}
       </button>

@@ -6,7 +6,7 @@ import { CategoryFormModal } from './CategoryFormModal'
 import type { Category } from '../schema/CategorySchema.type'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteCategories } from '../api/api'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useHeader } from '@/hooks/useHeaderContext'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { useCategoryModalStore } from '../store'
@@ -162,7 +162,6 @@ export default function CategoryListPage() {
 
   return (
     <div className="space-y-4">
-      <ToastContainer />
 
       {/* Data Table */}
       <DataTable

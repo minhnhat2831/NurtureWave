@@ -6,7 +6,6 @@ import { useEffect } from "react"
 import { useHeader } from "@/hooks/useHeaderContext"
 import AdminModal from "../components/modal/AdminModal"
 import AdminDelete from "../components/modal/AdminDelete"
-import { ToastContainer } from "react-toastify"
 import { useAdminStore } from "../store/useAdminStore"
 
 export default function AdminPage() {
@@ -68,7 +67,7 @@ export default function AdminPage() {
     const sortTableColumns = ['username', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt']
 
     return (<>
-        <ToastContainer />
+
         <DataTable
             data={data || []}
             columns={AdminColumns}
