@@ -6,10 +6,6 @@ import {
   type VoucherQueryParams,
   type CreateVoucherData,
 } from '../schema/VoucherSchema.type';
-import {
-  voucherListResponseSchema,
-  voucherDetailResponseSchema
-} from '../schema/VoucherSchema';
 
 /**
  * Get all vouchers with pagination, search, sort, and filters
@@ -20,8 +16,7 @@ export const getVouchers = async (
   params?: VoucherQueryParams
 ): Promise<VoucherListResponse> => {
   const response = await axiosInstance.get<VoucherListResponse>(API_ENDPOINTS.API_ADMIN_VOUCHERS, { params });
-  // Runtime validation
-  return voucherListResponseSchema.parse(response.data);
+  return response.data;
 };
 
 /**
@@ -33,8 +28,7 @@ export const createVoucher = async (
   data: CreateVoucherData
 ): Promise<VoucherDetailResponse> => {
   const response = await axiosInstance.post<VoucherDetailResponse>(API_ENDPOINTS.API_ADMIN_VOUCHERS, data);
-  // Runtime validation
-  return voucherDetailResponseSchema.parse(response.data);
+  return response.data;
 };
 
 /**
