@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     //Admin vouchers
     API_ADMIN_VOUCHERS : '/admins/vouchers',
     API_ADMIN_VOUCHERS_ID : (id: string) => `/admins/vouchers/${id}`,
+    API_ADMIN_DOULA_VOUCHERS : '/admins/doula-vouchers',
 
     //Admin doula
     API_ADMIN_DOULA : '/admins/doulas',
