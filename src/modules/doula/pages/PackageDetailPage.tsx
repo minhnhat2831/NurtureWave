@@ -5,7 +5,6 @@ import { useHeader } from "@/hooks/useHeaderContext";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { DataTable } from "@/components/Table";
 import { DoulaPackageDetailColumns } from "../components/table/DoulaPackageDetailColumn";
-import { ToastContainer } from "react-toastify";
 import { Icons } from "@/components/common";
 
 export default function PackagePage() {
@@ -26,7 +25,6 @@ export default function PackagePage() {
     }, [setHeaderContent, id])
 
     return (<>
-        <ToastContainer />
         <div className="w-full h-screen py-2 px-5 bg-gray-100">
             <div className="flex justify-between px-2 py-4">
                 <button className="cursor-pointer flex items-center" onClick={() => nav(-1)}>

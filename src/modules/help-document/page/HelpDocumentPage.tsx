@@ -1,19 +1,20 @@
-import { useHeader } from "@/hooks/useHeaderContext"
-import { useDoulaStore } from "../store/useDoulaStore"
-import { useEffect } from "react"
+import { Button } from "@/components/common"
 import { DataTable, SearchFilterBar } from "@/components/Table"
-import { DoulaColumns } from "../components/table/DoulaColumns"
-import DoulaEdit from "../components/modal/DoulaEdit"
-import DoulaDelete from "../components/modal/DoulaDelete"
-import useDoula from "../hooks/useDoula"
+import { useHeader } from "@/hooks/useHeaderContext"
+import { useEffect } from "react"
+import { useHelpDocumentStore } from "../store/useHelpDocumentStore"
+import useHelpDocument from "../hooks/useHelpDocument"
+import { HelpDocumentColumns } from "../components/table/HelpDocumentColumns"
+import HelpDocumentDelete from "../components/modal/HelpDocumnetDelete"
+import HelpDocumentModal from "../components/modal/HelpDocumentModal"
 
-export default function DoulaPage() {
-    const { useGetAllDoula } = useDoula()
-    const { typeMode, open } = useDoulaStore()
+export default function HelpDocumnetPage(){
+    const { useGetAllHelpDocument } = useHelpDocument()
+    const { typeMode, setTypeMode, setOpen, open } = useHelpDocumentStore()
     const { setHeaderContent } = useHeader()
     const {
         data,
-        loading,
+        isLoading,
         metadata,
         limit,
         page,
@@ -22,11 +23,11 @@ export default function DoulaPage() {
         setPage,
         setSort,
         sort,
-        setSearch } = useGetAllDoula()
+        setSearch } = useGetAllHelpDocument()
 
     useEffect(() => {
         setHeaderContent({
-            title: 'Doula Management',
+            title: 'Help Document',
             searchBar: (
                 <SearchFilterBar
                     searchValue={search}
@@ -34,6 +35,14 @@ export default function DoulaPage() {
                     searchPlaceholder="Search"
                     className="flex-1 mb-0"
                 />
+            ),
+            actions: (
+                <Button onClick={() => {
+                    setTypeMode('create')
+                    setOpen(true)
+                }} variant="primary">
+                    Create Document
+                </Button>
             ),
         })
 
@@ -45,22 +54,23 @@ export default function DoulaPage() {
     const renderModal = () => {
         if (!open) return null
         switch (typeMode) {
-            case "edit":
-                return <DoulaEdit />
+            case 'create':
+                return <HelpDocumentModal />
+            case 'edit':
+                return <HelpDocumentModal />
             case "delete":
-                return <DoulaDelete />
+                return <HelpDocumentDelete />
             default:
                 return null
         }
     }
-
-    const sortTableColumns = ['user.fullName', 'user.lastName', 'user.email', 'status', 'createdAt']
+    const sortTableColumns = ['title', 'createdAt']
 
     return (<>
         <DataTable
             data={data || []}
-            columns={DoulaColumns}
-            isLoading={loading}
+            columns={HelpDocumentColumns}
+            isLoading={isLoading}
             totalPages={metadata?.totalPages || 0}
             pageIndex={page - 1}
             pageSize={limit}

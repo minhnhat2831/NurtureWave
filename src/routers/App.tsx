@@ -1,8 +1,9 @@
-import { Route, Routes } from "react-router"
+import { Route, Routes, Navigate } from "react-router"
 import LoginPage from "../modules/auth/page/LoginPage"
 import ArticleListPage from "../modules/article/page/ArticleListPage"
 import CategoryListPage from "../modules/category/page/CategoryListPage"
 import VoucherListPage from "../modules/voucher/page/VoucherListPage"
+import VoucherDetailPage from "../modules/voucher/page/VoucherDetailPage"
 import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
@@ -13,6 +14,8 @@ import DoulaViewPage from "@/modules/doula/pages/DoulaViewPage";
 import PackagePage from "@/modules/doula/pages/PackageDetailPage";
 import ClientPage from "@/modules/client/page/ClientPage";
 import ClientViewPage from "@/modules/client/page/ClientViewPage";
+import HelpDocumnetPage from "@/modules/help-document/page/HelpDocumentPage"
+import SearchSettingPage from "@/modules/search-setting/page/SearchSettingPage"
 
 function App() {
   return (
@@ -135,7 +138,10 @@ function App() {
         }>
         </Route>
 
-        <Route path="/voucher" element={
+        {/* Redirect old voucher route */}
+        <Route path="/voucher" element={<Navigate to="/vouchers" replace />} />
+
+        <Route path="/vouchers" element={
           <ProtectedRoute>
             <AdminLayout>
               <VoucherListPage />
@@ -144,10 +150,19 @@ function App() {
         }>
         </Route>
 
+        <Route path="/vouchers/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <VoucherDetailPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }>
+        </Route>
+
         <Route path="/help-documents" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Help Documents" />
+              <HelpDocumnetPage />
             </AdminLayout>
           </ProtectedRoute>
         }>
@@ -156,7 +171,7 @@ function App() {
         <Route path="/search-settings" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Search Settings" />
+              <SearchSettingPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

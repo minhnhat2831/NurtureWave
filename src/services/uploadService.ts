@@ -19,9 +19,6 @@ interface SignedUrlResponse {
   }
 }
 
-/**
- * Get presigned URL from backend for S3 upload
- */
 export const getSignedUrl = async (type: 'images' | 'videos' = 'images'): Promise<SignedUrlResponse> => {
   const response = await axiosInstance.post<SignedUrlResponse>(
     API_ENDPOINTS.API_MEDIAS_SIGNED_URL,
@@ -30,10 +27,6 @@ export const getSignedUrl = async (type: 'images' | 'videos' = 'images'): Promis
   return response.data
 }
 
-/**
- * Upload file to S3 using presigned URL
- * Returns the final URL of uploaded file
- */
 export const uploadFileToS3 = async (file: File): Promise<string> => {
   try {
     // Step 1: Get presigned URL
@@ -46,7 +39,6 @@ export const uploadFileToS3 = async (file: File): Promise<string> => {
     // Add all fields from signed URL response (must be in order)
     Object.entries(fields).forEach(([key, value]) => {
       if (key === 'key') {
-        // Replace ${filename} placeholder with actual filename
         const finalKey = value.replace('${filename}', file.name)
         formData.append(key, finalKey)
       } else {

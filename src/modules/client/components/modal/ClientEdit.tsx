@@ -7,7 +7,8 @@ import useClient from "../../hooks/useClient"
 import type { clientRequest } from "../../schema/types/ClientSchema.type"
 import { clientRequestSchema } from "../../schema/schemas/ClientSchema"
 import { FormInput, FormSelect } from "@/components/Form"
-import { Button, ConfirmModal, Icons } from "@/components/common"
+import { Button, ConfirmModal } from "@/components/common"
+import ModalWrapper from "@/components/common/FormModal"
 
 const STATUS_OPTIONS = [
     { value: 'active', label: 'Active' },
@@ -44,30 +45,6 @@ export default function ClientEdit() {
         }
     }
 
-    const ModalWrapper = ({
-        title,
-        children,
-    }: {
-        title: string
-        children: React.ReactNode
-    }) => (
-        <div className="fixed inset-0 z-50 flex items-center justify-end">
-            <div className="absolute inset-0 bg-black/50" />
-            <div className="relative bg-white shadow-xl w-full max-w-xl h-full overflow-y-auto">
-                <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
-                    >
-                        <Icons.closeButton />
-                    </button>
-                </div>
-                {children}
-            </div>
-        </div>
-    )
-
     const handleCreateClick = async () => {
         const isValid = await method.trigger()
         if (isValid) {
@@ -84,7 +61,7 @@ export default function ClientEdit() {
 
     return (<>
         <FormProvider {...method}>
-            <ModalWrapper title="Edit Client">
+            <ModalWrapper title="Edit Client" onClose={() => setOpen(false)} isLoading={useEditClient.isPending}>
                 <form className="p-6 space-y-4">
                     <div className="flex">
                         <FormInput

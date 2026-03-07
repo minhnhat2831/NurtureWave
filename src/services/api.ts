@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     //Admin vouchers
     API_ADMIN_VOUCHERS : '/admins/vouchers',
     API_ADMIN_VOUCHERS_ID : (id: string) => `/admins/vouchers/${id}`,
+    API_ADMIN_DOULA_VOUCHERS : '/admins/doula-vouchers',
 
     //Admin doula
     API_ADMIN_DOULA : '/admins/doulas',
@@ -60,6 +61,10 @@ export const API_ENDPOINTS = {
     //help document
     API_HELP_DOCUMENT : "/admins/help-documents",
     API_HELP_DOCUMENT_ID : (id? : string) => `/admins/help-documents/${id}`,
+
+    //Search-setting
+    API_SEARCH_SETTING : "/admins/trending-keywords",
+    API_SEARCH_SETTING_ID : (id? : string) => `/admins/trending-keywords/${id}`,
 
     //Medias - Upload
     API_MEDIAS_SIGNED_URL : '/medias/signed-url',

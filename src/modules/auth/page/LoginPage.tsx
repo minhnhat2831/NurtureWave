@@ -1,4 +1,3 @@
-import { ToastContainer } from 'react-toastify'
 import useLoginForm from '../hook/useLoginForm'
 import { FormInput } from '@/components/Form'
 import { FormProvider } from 'react-hook-form'
@@ -8,7 +7,6 @@ export default function LoginPage() {
     const { method, loading, onSubmit } = useLoginForm()
 
     return (<>
-        <ToastContainer />
         <FormProvider {...method}>
         <div className="h-screen flex justify-center items-center bg-[url(/bg.jpg)] bg-cover bg-center">
             <div className="w-90 h-auto rounded-3xl bg-white px-8 py-15">
@@ -19,6 +17,7 @@ export default function LoginPage() {
                             disabled={loading}
                             type='text'
                             name='username'
+                            placeholder='User Name'
                             autoComplete="on"
                             label='Username' />
                     </div>
@@ -27,6 +26,7 @@ export default function LoginPage() {
                             disabled={loading}
                             type='password'
                             name='password'
+                            placeholder='password'
                             autoComplete="on"
                             label='Password' />
                     </div>

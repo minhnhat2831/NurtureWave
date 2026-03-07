@@ -5,7 +5,6 @@ import useClient from "../hooks/useClient";
 import { useClientStore } from "../store/useClientStore";
 import { useHeader } from "@/hooks/useHeaderContext";
 import { useEffect } from "react";
-import { ToastContainer } from "react-toastify";
 import { DataTable, TableActions } from "@/components/Table";
 import { CareColumns } from "../components/table/CareColumns";
 import { formatDate } from "@/utils/formatDate";
@@ -50,7 +49,6 @@ export default function ClientViewPage() {
     }
 
     return (<>
-        <ToastContainer />
         <div className="flex justify-between px-2 py-4">
             <button className="cursor-pointer flex items-center" onClick={() => nav(-1)}>
             <Icons.arrowLeft />Back</button>

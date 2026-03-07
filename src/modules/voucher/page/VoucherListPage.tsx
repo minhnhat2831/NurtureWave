@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
   StatusBadge,
@@ -12,7 +13,7 @@ import { VoucherFormModal } from './VoucherFormModal';
 import type { Voucher } from '../schema/VoucherSchema.type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteVouchers } from '../api/api';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useHeader } from '@/hooks/useHeaderContext';
 import { formatDateTime } from '@/utils/formatDateTime';
 import { useVoucherModalStore } from '../store/voucherModalStore';
@@ -25,6 +26,7 @@ import 'react-toastify/dist/ReactToastify.css';
  */
 export default function VoucherListPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { setHeaderContent } = useHeader();
 
   // Table data & pagination
@@ -85,6 +87,13 @@ export default function VoucherListPage() {
       });
     },
     [showConfirm, setConfirmLoading, deleteMutation]
+  );
+
+  const handleViewClick = useCallback(
+    (id: string) => {
+      navigate(`/vouchers/${id}`);
+    },
+    [navigate]
   );
 
   // Set header content
@@ -171,12 +180,13 @@ export default function VoucherListPage() {
         header: 'Action',
         cell: ({ row }) => (
           <TableActions
+            onView={() => handleViewClick(row.original.id)}
             onDelete={() => handleDeleteClick(row.original.id)}
           />
         ),
       },
     ],
-    [handleDeleteClick]
+    [handleViewClick, handleDeleteClick]
   );
 
   // Sortable columns
@@ -184,7 +194,6 @@ export default function VoucherListPage() {
 
   return (
     <div className="space-y-4">
-      <ToastContainer />
 
       {/* Data Table */}
       <DataTable
@@ -201,14 +210,6 @@ export default function VoucherListPage() {
         sortableColumns={sortableColumns}
         isLoading={isLoading}
       />
-
-      {/* TODO: Create/Edit Modal - Implement later */}
-      {/* <VoucherFormModal
-        isOpen={showFormModal}
-        onClose={closeFormModal}
-        voucher={selectedVoucher}
-        onSuccess={closeFormModal}
-      /> */}
 
       {/* Create Modal */}
       <VoucherFormModal

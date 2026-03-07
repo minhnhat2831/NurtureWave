@@ -18,6 +18,9 @@ export type { ConfirmModalProps } from './ConfirmModal';
 export { GlobalConfirmDialog } from './GlobalConfirmDialog';
 
 export { ChangePasswordModal } from './ChangePasswordModal';
+
+export { InfoField } from './InfoField';
+export type { InfoFieldProps } from './InfoField';
 export type { ChangePasswordModalProps, ChangePasswordFormData } from './ChangePasswordModal';
 
 export { ImageUploader } from './ImageUploader';

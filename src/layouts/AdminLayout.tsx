@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Sidebar, Header } from '.';
 import { HeaderProvider } from '@/hooks/useHeaderContext';
 import { GlobalConfirmDialog } from '@/components/common';
+import { ToastContainer } from 'react-toastify';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   return (
     <HeaderProvider>
+      <ToastContainer style={{ zIndex: 9999 }} />
       <div className="flex h-screen overflow-hidden bg-gray-50">
         {/* Sidebar */}
         <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />

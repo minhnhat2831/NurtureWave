@@ -21,6 +21,32 @@ export const voucherItemSchema = z.object({
   numOfUsed: z.string(), 
 })
 
+export const voucherUsageItemSchema = z.object({
+  id: z.string(),
+  takenBy: z.string().nullable().optional(),
+  takenDate: z.string(),
+})
+
+// Schema for doula voucher usage from /admins/doula-vouchers
+export const doulaVoucherUsageSchema = z.object({
+  id: z.string(),
+  doulaId: z.string().optional(),
+  voucherId: z.string().optional(),
+  usedAt: z.string().optional(),
+  createdAt: z.string().optional(),
+  doulaUser: z.object({
+    id: z.string().optional(),
+    fullName: z.string().optional(),
+    firstName: z.string().optional(),
+  }).optional(),
+})
+
+export const doulaVoucherUsageListResponseSchema = z.object({
+  message: z.string(),
+  data: z.array(doulaVoucherUsageSchema),
+  metadata: Metadata,
+})
+
 export const voucherListResponseSchema = z.object({
   message: z.string(),
   data: z.array(voucherItemSchema),
@@ -30,6 +56,15 @@ export const voucherListResponseSchema = z.object({
 export const voucherDetailResponseSchema = z.object({
   message: z.string(),
   data: voucherItemSchema,
+})
+
+export const voucherDetailWithUsageResponseSchema = z.object({
+  message: z.string(),
+  data: z.object({
+    voucher: voucherItemSchema,
+    usageHistory: z.array(voucherUsageItemSchema),
+    metadata: Metadata,
+  }),
 })
 
 

@@ -1,33 +1,32 @@
 import { Button } from "@/components/common"
-import { AdminColumns } from "../components/table/AdminColumns"
-import useAdmin from "../hooks/useAdmin"
 import { DataTable, SearchFilterBar } from "@/components/Table"
-import { useEffect } from "react"
 import { useHeader } from "@/hooks/useHeaderContext"
-import AdminModal from "../components/modal/AdminModal"
-import AdminDelete from "../components/modal/AdminDelete"
-import { useAdminStore } from "../store/useAdminStore"
+import { useEffect } from "react"
+import useSearchSetting from "../hooks/useSearchSetting"
+import { useSearchSettingStore } from "../store/useSearchSettingStore"
+import { SearchSettingColumns } from "../components/table/SearchSettingColumns"
+import SearchSettingModal from "../components/modal/SearchSettingModal"
+import SearchSettingDelete from "../components/modal/SearchSettingDelete"
 
-export default function AdminPage() {
-    const { useGetAllAdmin } = useAdmin()
-    const { typeMode, setTypeMode, setOpen, open } = useAdminStore()
+
+export default function SearchSettingPage(){
+    const { useGetAllSearchSetting } = useSearchSetting()
+    const { typeMode, setTypeMode, setOpen, open } = useSearchSettingStore()
     const { setHeaderContent } = useHeader()
     const {
         data,
-        loading,
+        isLoading,
         metadata,
         limit,
         page,
         search,
         setLimit,
         setPage,
-        setSort,
-        sort,
-        setSearch } = useGetAllAdmin()
+        setSearch } = useGetAllSearchSetting()
 
     useEffect(() => {
         setHeaderContent({
-            title: 'Admin',
+            title: 'Search Setting',
             searchBar: (
                 <SearchFilterBar
                     searchValue={search}
@@ -41,7 +40,7 @@ export default function AdminPage() {
                     setTypeMode('create')
                     setOpen(true)
                 }} variant="primary">
-                    Create Admin
+                    Create
                 </Button>
             ),
         })
@@ -55,32 +54,27 @@ export default function AdminPage() {
         if (!open) return null
         switch (typeMode) {
             case 'create':
-                return <AdminModal />
+                return <SearchSettingModal />
             case 'edit':
-                return <AdminModal />
+                return <SearchSettingModal />
             case "delete":
-                return <AdminDelete />
+                return <SearchSettingDelete />
             default:
                 return null
         }
     }
-    const sortTableColumns = ['username', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt']
 
     return (<>
-
         <DataTable
             data={data || []}
-            columns={AdminColumns}
-            isLoading={loading}
+            columns={SearchSettingColumns}
+            isLoading={isLoading}
             totalPages={metadata?.totalPages || 0}
             pageIndex={page - 1}
             pageSize={limit}
             totalItems={metadata?.totalCount || 0}
             onPageChange={(newPageIndex) => setPage(newPageIndex + 1)}
             onPageSizeChange={setLimit}
-            currentSort={sort}
-            onSortChange={setSort}
-            sortableColumns={sortTableColumns}
         />
         {open && renderModal()}
     </>)

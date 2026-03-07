@@ -6,7 +6,7 @@ import { ArticleFormModal } from './ArticleFormModal'
 import type { Article } from '../schema/ArticleSchema.type'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteArticles } from '../api/api'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useHeader } from '@/hooks/useHeaderContext'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { useArticleModalStore } from '../store'
@@ -168,7 +168,6 @@ export default function ArticleListPage() {
 
   return (
     <div className="space-y-4">
-      <ToastContainer />
 
       {/* Data Table */}
       <DataTable

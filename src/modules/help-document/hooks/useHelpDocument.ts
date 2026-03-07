@@ -11,6 +11,8 @@ export default function useHelpDocument() {
         const {
             data,
             limit,
+            isLoading,
+            page,
             metadata,
             search,
             setLimit,
@@ -40,6 +42,8 @@ export default function useHelpDocument() {
             limit,
             metadata,
             search,
+            isLoading,
+            page,
             setLimit,
             setPage,
             setSearch,
