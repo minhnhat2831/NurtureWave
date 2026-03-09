@@ -5,12 +5,9 @@ import { toast } from 'react-toastify'
 import { createArticleSchema, editArticleSchema } from '../schema/ArticleSchema'
 import { createArticle, updateArticle } from '../api/api'
 import { getPictureUrl } from '@/utils/imageHelpers'
+import { handleApiError } from '@/utils/errorHandler'
 import type { CreateArticleData, EditArticleData, Article } from '../schema/ArticleSchema.type'
 
-/**
- * Hook for Article Create Form
- * Usage: const { method, onSubmit, isLoading } = useCreateArticleForm({ onSuccess: () => closeModal() })
- */
 interface UseCreateArticleFormProps {
   onSuccess?: () => void
 }
@@ -41,15 +38,10 @@ export const useCreateArticleForm = ({ onSuccess }: UseCreateArticleFormProps) =
       method.reset()
       onSuccess?.()
     },
-    onError: (error: unknown) => {
-      const err = error as { response?: { data?: { message?: string } } }
-      toast.error(err.response?.data?.message || 'Failed to create article')
-    },
+    onError: (error) => handleApiError(error, 'Failed to create article'),
   })
 
-  const onSubmit = async (data: CreateArticleData) => {
-    mutation.mutate(data)
-  }
+  const onSubmit = (data: CreateArticleData) => mutation.mutate(data)
 
   return {
     method,
@@ -87,16 +79,11 @@ export const useEditArticleForm = ({ article, onSuccess }: UseEditArticleFormPro
       queryClient.invalidateQueries({ queryKey: ['articles'] })
       onSuccess?.()
     },
-    onError: (error: unknown) => {
-      const err = error as { response?: { data?: { message?: string } } }
-      toast.error(err.response?.data?.message || 'Failed to update article')
-    },
+    onError: (error) => handleApiError(error, 'Failed to update article'),
   })
 
-  const onSubmit = async (data: EditArticleData) => {
+  const onSubmit = (data: EditArticleData) => {
     const submitData = { ...data }
-    
-    // Get original picture URL for comparison
     const originalPictureUrl = getPictureUrl(article.picture)
     
     if (submitData.picture === originalPictureUrl) {

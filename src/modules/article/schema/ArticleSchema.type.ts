@@ -8,14 +8,6 @@ import type {
   articleParamsSchema,
 } from './ArticleSchema'
 
-/**
- * ARTICLE MODULE TYPES
- * TypeScript types inferred from Zod schemas
- */
-
-// ============================================
-// Core Types
-// ============================================
 export type Article = z.infer<typeof articleItemSchema>
 
 export type CreateArticleData = z.infer<typeof createArticleSchema>

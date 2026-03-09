@@ -13,7 +13,6 @@ export const clientRequestSchema = z.object({
     phoneNumber: z.string(),
     status: z.string()
 }).superRefine((data, ctx) => {
-    console.log(data.phoneNumber && data.phoneNumber.length > 8 && data.phoneNumber.length < 20)
     if(data.phoneNumber && data.phoneNumber.length < 8 && data.phoneNumber.length < 20){
         ctx.addIssue({
             path : ["phoneNumber"],
