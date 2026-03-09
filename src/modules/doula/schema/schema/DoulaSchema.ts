@@ -5,7 +5,6 @@ const userSchema = z.object({
     countryCode: StringNullAndOptional,
     phoneNumber: z.string()
 }).superRefine((data, ctx) => {
-    console.log(data.phoneNumber && data.phoneNumber.length > 8 && data.phoneNumber.length < 20)
     if(data.phoneNumber && data.phoneNumber.length < 8 && data.phoneNumber.length < 20){
         ctx.addIssue({
             path : ["phoneNumber"],

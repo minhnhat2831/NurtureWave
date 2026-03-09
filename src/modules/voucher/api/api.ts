@@ -33,16 +33,17 @@ export const createVoucher = async (
 };
 
 /**
- * Delete multiple vouchers by IDs
- * @param ids - Array of voucher IDs to delete
+ * Delete a voucher by ID (soft delete by setting status to inactive)
+ * @param id - Voucher ID to delete
  * @returns Success status
  */
-export const deleteVouchers = async (
-  ids: string[]
+export const deleteVoucher = async (
+  id: string
 ): Promise<{ success: boolean }> => {
-  const response = await axiosInstance.delete<{ success: boolean }>(API_ENDPOINTS.API_ADMIN_VOUCHERS, {
-    data: { ids },
-  });
+  const response = await axiosInstance.put<{ success: boolean }>(
+    API_ENDPOINTS.API_ADMIN_VOUCHERS_ID(id),
+    { status: 'inactive' }
+  );
   return response.data;
 };
 

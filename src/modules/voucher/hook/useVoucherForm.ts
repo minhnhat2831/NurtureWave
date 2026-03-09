@@ -17,10 +17,12 @@ interface UseCreateVoucherFormProps {
 export const useCreateVoucherForm = ({ onSuccess }: UseCreateVoucherFormProps) => {
   const queryClient = useQueryClient()
   
-  // Get today and tomorrow dates in YYYY-MM-DD format
+  // Get tomorrow and next week dates in YYYY-MM-DD format
   const today = new Date()
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
+  const nextWeek = new Date(today)
+  nextWeek.setDate(nextWeek.getDate() + 7)
   
   const formatDate = (date: Date) => date.toISOString().split('T')[0]
   
@@ -30,8 +32,8 @@ export const useCreateVoucherForm = ({ onSuccess }: UseCreateVoucherFormProps) =
     defaultValues: {
       code: '',
       description: '',
-      startDate: formatDate(today),
-      endDate: formatDate(tomorrow),
+      startDate: formatDate(tomorrow),
+      endDate: formatDate(nextWeek),
       quantityUse: undefined,
       type: undefined,
       amount: undefined,

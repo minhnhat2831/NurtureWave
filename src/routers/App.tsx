@@ -4,6 +4,7 @@ import ArticleListPage from "../modules/article/page/ArticleListPage"
 import CategoryListPage from "../modules/category/page/CategoryListPage"
 import VoucherListPage from "../modules/voucher/page/VoucherListPage"
 import VoucherDetailPage from "../modules/voucher/page/VoucherDetailPage"
+import PDSessionListPage from "../modules/pd-session/page/PDSessionListPage"
 import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
@@ -110,10 +111,11 @@ function App() {
         }>
         </Route>
 
+        {/* PD Session Module */}
         <Route path="/pd-session" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="PD Session" />
+              <PDSessionListPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

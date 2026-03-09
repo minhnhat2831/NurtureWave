@@ -107,6 +107,7 @@ export function FormDatePicker<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <BaseDatePicker
           {...field}
+          value={field.value || ''}
           error={fieldState.error?.message}
           {...props}
         />
@@ -129,6 +130,7 @@ export function FormNumberInput<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <BaseInput
           {...field}
+          value={field.value ?? ''}
           type="number"
           onChange={(e) => {
             const value = e.target.value
