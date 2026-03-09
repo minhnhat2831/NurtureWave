@@ -4,6 +4,7 @@ import ArticleListPage from "../modules/article/page/ArticleListPage"
 import CategoryListPage from "../modules/category/page/CategoryListPage"
 import VoucherListPage from "../modules/voucher/page/VoucherListPage"
 import VoucherDetailPage from "../modules/voucher/page/VoucherDetailPage"
+import PDSessionListPage from "../modules/pd-session/page/PDSessionListPage"
 import PlaceholderPage from "../pages/PlaceholderPage"
 import { AdminLayout } from '@/layouts';
 import PublicRoute from "@/components/context/PublicRoute";
@@ -16,6 +17,7 @@ import ClientPage from "@/modules/client/page/ClientPage";
 import ClientViewPage from "@/modules/client/page/ClientViewPage";
 import HelpDocumnetPage from "@/modules/help-document/page/HelpDocumentPage"
 import SearchSettingPage from "@/modules/search-setting/page/SearchSettingPage"
+import TransactionPage from "@/modules/transaction/page/TransactionPage"
 
 function App() {
   return (
@@ -110,10 +112,11 @@ function App() {
         }>
         </Route>
 
+        {/* PD Session Module */}
         <Route path="/pd-session" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="PD Session" />
+              <PDSessionListPage />
             </AdminLayout>
           </ProtectedRoute>
         }>
@@ -129,10 +132,10 @@ function App() {
         }>
         </Route>
 
-        <Route path="/subscriptions" element={
+        <Route path="/transactions" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Subscriptions" />
+              <TransactionPage />
             </AdminLayout>
           </ProtectedRoute>
         }>

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { createCategorySchema, editCategorySchema } from '../schema/CategorySchema'
 import { createCategory, updateCategory } from '../api/api'
 import { getPictureUrl } from '@/utils/imageHelpers'
+import { handleApiError } from '@/utils/errorHandler'
 import type { CreateCategoryData, EditCategoryData, Category } from '../schema/CategorySchema.type'
 
 /**
@@ -37,9 +38,8 @@ export const useCreateCategoryForm = ({ onSuccess }: UseCreateCategoryFormProps)
       method.reset()
       onSuccess?.()
     },
-    onError: (error: unknown) => {
-      const err = error as { response?: { data?: { message?: string } } }
-      toast.error(err.response?.data?.message || 'Failed to create category')
+    onError: (error) => {
+      handleApiError(error, 'Failed to create category')
     },
   })
 
@@ -81,9 +81,8 @@ export const useEditCategoryForm = ({ category, onSuccess }: UseEditCategoryForm
       queryClient.invalidateQueries({ queryKey: ['categories'] })
       onSuccess?.()
     },
-    onError: (error: unknown) => {
-      const err = error as { response?: { data?: { message?: string } } }
-      toast.error(err.response?.data?.message || 'Failed to update category')
+    onError: (error) => {
+      handleApiError(error, 'Failed to update category')
     },
   })
 
@@ -92,9 +91,6 @@ export const useEditCategoryForm = ({ category, onSuccess }: UseEditCategoryForm
     
     // Get original picture URL for comparison
     const originalPictureUrl = getPictureUrl(category.picture)
-    
-    // Only send picture if it's a new URL (different from original)
-    // If picture is unchanged, don't send it to backend
     if (submitData.picture === originalPictureUrl) {
       delete submitData.picture
     }

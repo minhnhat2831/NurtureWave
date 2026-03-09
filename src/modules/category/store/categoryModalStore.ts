@@ -7,6 +7,12 @@ interface CategoryModalState {
   selectedCategory: Category | null
   openFormModal: (category?: Category) => void
   closeFormModal: () => void
+  
+  // Delete Modal
+  showDeleteModal: boolean
+  selectedDeleteCategory: Category | null
+  openDeleteModal: (category: Category) => void
+  closeDeleteModal: () => void
 }
 
 export const useCategoryModalStore = create<CategoryModalState>((set) => ({
@@ -21,5 +27,18 @@ export const useCategoryModalStore = create<CategoryModalState>((set) => ({
   closeFormModal: () => set({
     showFormModal: false,
     selectedCategory: null,
+  }),
+  
+  showDeleteModal: false,
+  selectedDeleteCategory: null,
+  
+  openDeleteModal: (category) => set({
+    showDeleteModal: true,
+    selectedDeleteCategory: category,
+  }),
+  
+  closeDeleteModal: () => set({
+    showDeleteModal: false,
+    selectedDeleteCategory: null,
   }),
 }))

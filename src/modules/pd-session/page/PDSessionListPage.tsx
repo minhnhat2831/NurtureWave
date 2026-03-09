@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useCallback } from 'react'
 import { DataTable, SearchFilterBar, Button } from '@/components/common'
 import { useTableManager } from '@/hooks/useTableManager'
-import { getArticles } from '../api/api'
-import { ArticleFormModal } from '../components/modal/ArticleFormModal'
-import ArticleDelete from '../components/modal/ArticleDelete'
-import { createArticleColumns } from '../components/table/ArticleColumns'
-import type { Article } from '../schema/ArticleSchema.type'
+import { getPDSessions } from '../api/api'
+import { PDSessionFormModal } from '../components/modal/PDSessionFormModal'
+import PDSessionDelete from '../components/modal/PDSessionDelete'
+import { createPDSessionColumns } from '../components/table/PDSessionColumns'
+import type { PDSession } from '../schema/PDSessionSchema.type'
 import { useHeader } from '@/hooks/useHeaderContext'
-import { useArticleModalStore } from '../store'
+import { usePDSessionModalStore } from '../store'
 import 'react-toastify/dist/ReactToastify.css'
 
 /**
- * ARTICLE LIST PAGE
- * Main page for article management with CRUD operations
+ * PD SESSION LIST PAGE
+ * Main page for PD Session management with CRUD operations
  */
-export default function ArticleListPage() {
+export default function PDSessionListPage() {
   const { setHeaderContent } = useHeader()
 
   // Table data & pagination
@@ -31,9 +31,9 @@ export default function ArticleListPage() {
     setSort,
     isLoading,
   } = useTableManager({
-    queryKey: ['articles'],
+    queryKey: ['pd-sessions'],
     queryFn: async (params) => {
-      const response = await getArticles(params)
+      const response = await getPDSessions(params)
       return {
         data: response.data,
         metadata: response.metadata
@@ -45,25 +45,25 @@ export default function ArticleListPage() {
   // Modal states from zustand
   const {
     showFormModal,
-    selectedArticle,
+    selectedPDSession,
     openFormModal,
     closeFormModal,
     openDeleteModal,
-  } = useArticleModalStore()
+  } = usePDSessionModalStore()
 
   // Handlers with useCallback
-  const handleEdit = useCallback((article: Article) => {
-    openFormModal(article)
+  const handleEdit = useCallback((pdSession: PDSession) => {
+    openFormModal(pdSession)
   }, [openFormModal])
 
-  const handleDeleteClick = useCallback((article: Article) => {
-    openDeleteModal(article)
+  const handleDeleteClick = useCallback((pdSession: PDSession) => {
+    openDeleteModal(pdSession)
   }, [openDeleteModal])
 
   // Set header content
   useEffect(() => {
     setHeaderContent({
-      title: 'Article',
+      title: 'PD Session',
       searchBar: (
         <SearchFilterBar
           searchValue={search}
@@ -74,7 +74,7 @@ export default function ArticleListPage() {
       ),
       actions: (
         <Button onClick={() => openFormModal()} variant="primary">
-          Create Article
+          Create PD Session
         </Button>
       ),
     })
@@ -85,7 +85,7 @@ export default function ArticleListPage() {
   }, [search, setHeaderContent, setSearch, openFormModal])
 
   // Table columns definition with useMemo
-  const columns = useMemo(() => createArticleColumns({
+  const columns = useMemo(() => createPDSessionColumns({
     onEdit: handleEdit,
     onDelete: handleDeleteClick,
   }), [handleEdit, handleDeleteClick])
@@ -113,15 +113,15 @@ export default function ArticleListPage() {
       />
 
       {/* Create/Edit Modal */}
-      <ArticleFormModal
+      <PDSessionFormModal
         isOpen={showFormModal}
         onClose={closeFormModal}
-        article={selectedArticle}
+        pdSession={selectedPDSession}
         onSuccess={closeFormModal}
       />
 
       {/* Delete Modal */}
-      <ArticleDelete />
+      <PDSessionDelete />
     </div>
   )
 }

@@ -1,30 +1,21 @@
-import { useParams, useNavigate } from 'react-router';
-import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { type ColumnDef } from '@tanstack/react-table';
-import { useVoucherDetail } from '../hook/useVoucherDetail';
-import { Button, InfoField, DataTable } from '@/components/common';
-import { useHeader } from '@/hooks/useHeaderContext';
-import type { VoucherUsage } from '../schema/VoucherSchema.type';
-
-// Format date to dd/mm/yyyy
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
+import { useParams, useNavigate } from 'react-router'
+import { useEffect, useState, useMemo } from 'react'
+import { ArrowLeft } from 'lucide-react'
+import { useVoucherDetail } from '../hook/useVoucherDetail'
+import { Button, InfoField, DataTable } from '@/components/common'
+import { useHeader } from '@/hooks/useHeaderContext'
+import { createVoucherUsageColumns, voucherUsageSortableColumns } from '../components/table/VoucherUsageColumns'
+import { formatDate } from '@/utils/formatDate'
 
 /**
  * VOUCHER DETAIL PAGE
  * Displays voucher information
  */
 export default function VoucherDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { setHeaderContent } = useHeader();
-  const [usageSort, setUsageSort] = useState('takenBy');
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const { setHeaderContent } = useHeader()
+  const [usageSort, setUsageSort] = useState('takenBy')
 
   const {
     voucher,
@@ -36,7 +27,7 @@ export default function VoucherDetailPage() {
     setLimit,
     isLoading,
     error,
-  } = useVoucherDetail(id!);
+  } = useVoucherDetail(id!)
 
   // Set header
   useEffect(() => {
@@ -52,12 +43,15 @@ export default function VoucherDetailPage() {
           Back
         </Button>
       ),
-    });
+    })
 
     return () => {
-      setHeaderContent({});
-    };
-  }, [voucher?.code, id, navigate, setHeaderContent]);
+      setHeaderContent({})
+    }
+  }, [voucher?.code, id, navigate, setHeaderContent])
+
+  // Usage history table columns with useMemo
+  const usageColumns = useMemo(() => createVoucherUsageColumns(), [])
 
   // Show loading state
   if (isLoading) {
@@ -65,7 +59,7 @@ export default function VoucherDetailPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-gray-500">Loading...</div>
       </div>
-    );
+    )
   }
 
   // Show error state
@@ -74,7 +68,7 @@ export default function VoucherDetailPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-red-500">Error loading voucher details</div>
       </div>
-    );
+    )
   }
 
   // Show not found only after loading is complete and no voucher
@@ -83,33 +77,11 @@ export default function VoucherDetailPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-gray-500">Voucher not found</div>
       </div>
-    );
+    )
   }
 
   // Don't render if still no data
-  if (!voucher) return null;
-
-  // Usage history table columns
-  const usageColumns: ColumnDef<VoucherUsage>[] = [
-    {
-      accessorKey: 'takenBy',
-      header: 'Take by',
-      cell: ({ row }) => (
-        <span className="text-gray-900">
-          {row.original.takenBy || '-'}
-        </span>
-      ),
-    },
-    {
-      accessorKey: 'takenDate',
-      header: 'Date',
-      cell: ({ row }) => (
-        <span className="text-gray-900">
-          {formatDate(row.original.takenDate)}
-        </span>
-      ),
-    },
-  ];
+  if (!voucher) return null
 
   return (
     <div className="space-y-6">
@@ -151,9 +123,9 @@ export default function VoucherDetailPage() {
         onPageSizeChange={setLimit}
         currentSort={usageSort}
         onSortChange={setUsageSort}
-        sortableColumns={['takenBy']}
+        sortableColumns={voucherUsageSortableColumns}
         isLoading={isLoading}
       />
     </div>
-  );
+  )
 }
