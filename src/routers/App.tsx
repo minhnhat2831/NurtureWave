@@ -17,6 +17,7 @@ import ClientPage from "@/modules/client/page/ClientPage";
 import ClientViewPage from "@/modules/client/page/ClientViewPage";
 import HelpDocumnetPage from "@/modules/help-document/page/HelpDocumentPage"
 import SearchSettingPage from "@/modules/search-setting/page/SearchSettingPage"
+import TransactionPage from "@/modules/transaction/page/TransactionPage"
 
 function App() {
   return (
@@ -131,10 +132,10 @@ function App() {
         }>
         </Route>
 
-        <Route path="/subscriptions" element={
+        <Route path="/transactions" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PlaceholderPage title="Subscriptions" />
+              <TransactionPage />
             </AdminLayout>
           </ProtectedRoute>
         }>
