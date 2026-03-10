@@ -1,8 +1,8 @@
-import { Button } from '@/components/common';
+import { Button } from '@/components/common'
 
 interface CreateTransactionButtonProps {
-  onSelectDebit?: () => void;
-  onSelectCredit?: () => void;
+  onSelectDebit?: () => void
+  onSelectCredit?: () => void
 }
 
 export default function CreateTransactionButton({ 
@@ -41,5 +41,5 @@ export default function CreateTransactionButton({
         </button>
       </div>
     </div>
-  );
+  )
 }

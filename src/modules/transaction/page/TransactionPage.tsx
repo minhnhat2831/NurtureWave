@@ -11,12 +11,9 @@ export default function TransactionPage() {
       actions: (
         <CreateTransactionButton
           onSelectDebit={() => {
-            console.log('Creating Debit transaction');
             // TODO: Open modal or navigate to debit transaction form
           }}
           onSelectCredit={() => {
-            console.log('Creating Credit transaction');
-            // TODO: Open modal or navigate to credit transaction form
           }}
         />
       ),
@@ -25,7 +22,7 @@ export default function TransactionPage() {
     return () => {
       setHeaderContent({});
     };
-  }, []);
+  }, [setHeaderContent]);
 
   return (
     <div className="p-6">

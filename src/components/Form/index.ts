@@ -25,3 +25,5 @@ export {
   RHFDatePicker,
   RHFNumberInput,
 } from './FormField';
+
+export { FormCurrencyInput } from './FormCurrencyInput';

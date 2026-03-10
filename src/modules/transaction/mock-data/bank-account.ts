@@ -1,0 +1,138 @@
+import type { BankAccount } from '../types'
+
+// ==================== MOCK BANK ACCOUNTS ====================
+
+export const mockBankAccounts: BankAccount[] = [
+  // USD Accounts
+  {
+    id: 'bank-001',
+    bankAccountUid: 'float-dbs-cc',
+    accountName: 'DBS USD Corporate Account',
+    accountNumber: '001-234567-001',
+    bankName: 'DBS Bank Ltd',
+    currency: 'USD',
+    beneficiaryName: 'Acme Corporation',
+    beneficiaryBankName: 'DBS Bank',
+    beneficiaryBankAccountNumber: '001-234567-001',
+    beneficiaryBankSwift: 'DBSSSGSG',
+    correspondentBankName: 'JPMorgan Chase Bank',
+    correspondentBankSwift: 'CHASUS33',
+    displayName: 'DBS USD - Corporate (001-234567-001)',
+  },
+  {
+    id: 'bank-002',
+    bankAccountUid: 'cma-dbs-usd',
+    accountName: 'DBS CMA USD Account',
+    accountNumber: '002-345678-002',
+    bankName: 'DBS Bank Ltd',
+    currency: 'USD',
+    beneficiaryName: 'Global Industries Ltd',
+    beneficiaryBankName: 'DBS Bank',
+    beneficiaryBankAccountNumber: '002-345678-002',
+    beneficiaryBankSwift: 'DBSSSGSG',
+    correspondentBankName: 'JPMorgan Chase Bank',
+    correspondentBankSwift: 'CHASUS33',
+    displayName: 'DBS CMA USD (002-345678-002)',
+  },
+  {
+    id: 'bank-003',
+    bankAccountUid: 'hsbc-usd-001',
+    accountName: 'HSBC USD Business Account',
+    accountNumber: '003-456789-003',
+    bankName: 'HSBC Bank',
+    currency: 'USD',
+    beneficiaryName: 'Tech Ventures Inc',
+    beneficiaryBankName: 'HSBC Bank',
+    beneficiaryBankAccountNumber: '003-456789-003',
+    beneficiaryBankSwift: 'HSBCSGSG',
+    displayName: 'HSBC USD Business (003-456789-003)',
+  },
+  
+  // SGD Accounts
+  {
+    id: 'bank-004',
+    bankAccountUid: 'dbs-sgd-001',
+    accountName: 'DBS SGD Current Account',
+    accountNumber: '004-567890-004',
+    bankName: 'DBS Bank Ltd',
+    currency: 'SGD',
+    beneficiaryName: 'Global Industries Ltd',
+    beneficiaryBankName: 'DBS Bank',
+    beneficiaryBankAccountNumber: '004-567890-004',
+    beneficiaryBankSwift: 'DBSSSGSG',
+    displayName: 'DBS SGD Current (004-567890-004)',
+  },
+  {
+    id: 'bank-005',
+    bankAccountUid: 'ocbc-sgd-001',
+    accountName: 'OCBC SGD Savings Account',
+    accountNumber: '005-678901-005',
+    bankName: 'OCBC Bank',
+    currency: 'SGD',
+    beneficiaryName: 'Pacific Financial Group',
+    beneficiaryBankName: 'OCBC Bank',
+    beneficiaryBankAccountNumber: '005-678901-005',
+    beneficiaryBankSwift: 'OCBCSGSG',
+    displayName: 'OCBC SGD Savings (005-678901-005)',
+  },
+  
+  // VND Accounts
+  {
+    id: 'bank-006',
+    bankAccountUid: 'vcb-vnd-001',
+    accountName: 'Vietcombank VND Account',
+    accountNumber: '006-789012-006',
+    bankName: 'Vietcombank',
+    currency: 'VND',
+    beneficiaryName: 'Acme Corporation Vietnam',
+    beneficiaryBankName: 'Joint Stock Commercial Bank for Foreign Trade of Vietnam',
+    beneficiaryBankAccountNumber: '006-789012-006',
+    beneficiaryBankSwift: 'BFTVVNVX',
+    displayName: 'Vietcombank VND (006-789012-006)',
+  },
+  
+  // EUR Accounts
+  {
+    id: 'bank-007',
+    bankAccountUid: 'hsbc-eur-001',
+    accountName: 'HSBC EUR Business Account',
+    accountNumber: '007-890123-007',
+    bankName: 'HSBC Bank',
+    currency: 'EUR',
+    beneficiaryName: 'Tech Ventures Europe',
+    beneficiaryBankName: 'HSBC Bank',
+    beneficiaryBankAccountNumber: '007-890123-007',
+    beneficiaryBankSwift: 'HSBCGB2L',
+    displayName: 'HSBC EUR Business (007-890123-007)',
+  },
+  
+  // GBP Accounts
+  {
+    id: 'bank-008',
+    bankAccountUid: 'hsbc-gbp-001',
+    accountName: 'HSBC GBP Corporate Account',
+    accountNumber: '008-901234-008',
+    bankName: 'HSBC UK Bank',
+    currency: 'GBP',
+    beneficiaryName: 'Tech Ventures Inc',
+    beneficiaryBankName: 'HSBC UK Bank',
+    beneficiaryBankAccountNumber: '008-901234-008',
+    beneficiaryBankSwift: 'HBUKGB4B',
+    displayName: 'HSBC GBP Corporate (008-901234-008)',
+  },
+  
+  // AUD Accounts
+  {
+    id: 'bank-009',
+    bankAccountUid: 'nab-aud-001',
+    accountName: 'NAB AUD Business Account',
+    accountNumber: '009-012345-009',
+    bankName: 'National Australia Bank',
+    currency: 'AUD',
+    beneficiaryName: 'Pacific Financial Group',
+    beneficiaryBankName: 'National Australia Bank',
+    beneficiaryBankAccountNumber: '009-012345-009',
+    beneficiaryBankSwift: 'NATAAU3303M',
+    displayName: 'NAB AUD Business (009-012345-009)',
+  },
+]
