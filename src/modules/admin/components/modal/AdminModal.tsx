@@ -6,7 +6,6 @@ import type { createAdminUser, editAdminUser } from "../../schema/AdminSchema.ty
 import useAdmin from "../../hooks/useAdmin"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { createAdminUserSchema, editAdminUserSchema } from "../../schema/AdminSchema"
-import { toast } from "react-toastify"
 import { useState } from "react"
 import ModalWrapper from "@/components/common/FormModal"
 
@@ -22,7 +21,6 @@ export default function AdminModal() {
     const { selectedAdmin, typeMode, setOpen } = useAdminStore()
     const isEdit = typeMode === 'edit'
     const { data: dataDetail } = useAdminDetail(isEdit ? (selectedAdmin?.id ?? undefined) : undefined)
-    const { useCreateAdmin, useEditAdmin } = useAdmin()
     const [showConfirm, setShowConfirm] = useState(false)
     const method = useForm<AdminFormValues>({
         resolver: zodResolver(
@@ -36,47 +34,15 @@ export default function AdminModal() {
             password: "",
         }
     });
+    const { useCreateAdmin, useEditAdmin } = useAdmin(method)
 
     const onSubmit = async (data: AdminFormValues) => {
         if (isEdit) {
             if (!dataDetail || !dataDetail.id) return
             useEditAdmin.mutate(
-                { data: data as editAdminUser, id: dataDetail.id },
-                {
-                    onSuccess: () => {
-                        method.reset()
-                        setOpen(false)
-                    }
-                }
-            )
+                { data: data as editAdminUser, id: dataDetail.id })
         } else {
-            useCreateAdmin.mutate(
-                data as createAdminUser,
-                {
-                    onSuccess: () => {
-                        method.reset()
-                        setOpen(false)
-                    },
-                    onError: (error: any) => {
-                        const message = error.response?.data?.message
-                        if (message?.toLowerCase().includes("username")) {
-                            method.setError("username", {
-                                type: "server",
-                                message,
-                            })
-                            return
-                        }
-                        if (message?.toLowerCase().includes("email")) {
-                            method.setError("email", {
-                                type: "server",
-                                message,
-                            })
-                            return
-                        }
-                        toast.error(message)
-                    },
-                }
-            )
+            useCreateAdmin.mutate(data as createAdminUser)
         }
     }
 

@@ -18,6 +18,53 @@ export const TRANSACTION_TYPES = [
   ...CREDIT_TRANSACTION_TYPES,
 ] as const
 
+export const DEBIT_TRANSACTION_ENUM = [
+  DEBIT_TRANSACTION_TYPES[0] as "debit-others",
+  DEBIT_TRANSACTION_TYPES[1] as "fee",
+  DEBIT_TRANSACTION_TYPES[2] as "tax-withholding",
+  DEBIT_TRANSACTION_TYPES[3] as "withdrawal",
+] as const
+
+export const CREDIT_TRANSACTION_ENUM = [
+  CREDIT_TRANSACTION_TYPES[0] as "coupon-payment",
+  CREDIT_TRANSACTION_TYPES[1] as "credit-others",
+  CREDIT_TRANSACTION_TYPES[2] as "deposit",
+] as const
+
+export const DEBIT_TRANSACTION_TYPE_OPTION = [
+    {
+        value: DEBIT_TRANSACTION_ENUM[0],
+        label: DEBIT_TRANSACTION_TYPES[0]
+    },
+    {
+        value: DEBIT_TRANSACTION_ENUM[1],
+        label: DEBIT_TRANSACTION_TYPES[1]
+    },
+    {
+        value: DEBIT_TRANSACTION_ENUM[2],
+        label: DEBIT_TRANSACTION_TYPES[2]
+    },
+    {
+        value: DEBIT_TRANSACTION_ENUM[3],
+        label: DEBIT_TRANSACTION_TYPES[3]
+    },
+]
+
+export const CREDIT_TRANSACTION_TYPE_OPTION = [
+    {
+        value: CREDIT_TRANSACTION_ENUM[0],
+        label: CREDIT_TRANSACTION_TYPES[0]
+    },
+    {
+        value: CREDIT_TRANSACTION_ENUM[1],
+        label: CREDIT_TRANSACTION_TYPES[1]
+    },
+    {
+        value: CREDIT_TRANSACTION_ENUM[2],
+        label: CREDIT_TRANSACTION_TYPES[2]
+    },
+]
+
 export const TRANSACTION_STATUSES = ['Draft', 'Pending', 'Complete'] as const
 
 export type DebitTransactionType = (typeof DEBIT_TRANSACTION_TYPES)[number]

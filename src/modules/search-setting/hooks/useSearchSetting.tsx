@@ -3,10 +3,11 @@ import type { searchSettingRequest } from "../schema/SearchSettingSchema.type"
 import { createSearchSetting, deleteSearchSetting, editSearchSetting, getAllSearchSetting } from "../api/api"
 import { toast } from "react-toastify"
 import { useTableManager } from "@/hooks/useTableManager"
+import { useSearchSettingStore } from "../store/useSearchSettingStore"
 
-export default function useSearchSetting() {
+export default function useSearchSetting(methods? : any) {
     const queryClient = useQueryClient()
-
+    const { setOpen } = useSearchSettingStore()
     const useGetAllSearchSetting = () => {
         const {
             data,
@@ -57,6 +58,8 @@ export default function useSearchSetting() {
         onSuccess: (err) => {
             toast.success(err.message)
             queryClient.invalidateQueries({ queryKey: ["trending-keywords"] })
+            methods.reset()
+            setOpen(false)
         }
     })
 
@@ -66,6 +69,8 @@ export default function useSearchSetting() {
         onSuccess: (err) => {
             toast.success(err.message)
             queryClient.invalidateQueries({ queryKey: ['trending-keywords'] })
+            methods.reset()
+            setOpen(false)
         }
     })
 

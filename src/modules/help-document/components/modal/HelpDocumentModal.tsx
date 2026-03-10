@@ -18,7 +18,7 @@ export default function HelpDocumentModal() {
     const { selectedHelpDocument, setOpen, typeMode } = useHelpDocumentStore()
     const isEdit = typeMode === "edit"
     const [showConfirm, setShowConfirm] = useState(false)
-    const { useCreateHelpDocument, useEditHelpDocument, useHelpDocumentDetail } = useHelpDocument()
+    const { useHelpDocumentDetail } = useHelpDocument()
     const { data: helpDocumentDetail } = useHelpDocumentDetail(isEdit ? selectedHelpDocument?.id : "")
     const method = useForm<helpDocumentRequest>({
         resolver: zodResolver(helpDocumentRequestSchema),
@@ -32,48 +32,15 @@ export default function HelpDocumentModal() {
             status: ""
         }
     })
+    const { useCreateHelpDocument, useEditHelpDocument } = useHelpDocument(method)
 
     const onSubmit = async (data: helpDocumentRequest) => {
         try {
             if (isEdit && typeMode === "edit") {
                 if (!helpDocumentDetail) return
-                useEditHelpDocument.mutate({ id: helpDocumentDetail.id, data: data }, {
-                    onSuccess: () => {
-                        method.reset(data)
-                        setOpen(false)
-                    }
-                })
+                useEditHelpDocument.mutate({ id: helpDocumentDetail.id, data: data })
             } else {
-                useCreateHelpDocument.mutate(data, {
-                    onSuccess: () => {
-                        method.reset()
-                        setOpen(false)
-                    },
-                    onError: (err: any) => {
-                        const message = err.response?.data?.message
-                        if (message.toLowerCase().includes("title")) {
-                            method.setError("title", {
-                                type: "server",
-                                message
-                            })
-                            return
-                        }
-                        if (message.toLowerCase().includes("status")) {
-                            method.setError("status", {
-                                type: "server",
-                                message
-                            })
-                            return
-                        }
-                        if (message.toLowerCase().includes("content")) {
-                            method.setError("content", {
-                                type: "server",
-                                message
-                            })
-                            return
-                        }
-                    }
-                })
+                useCreateHelpDocument.mutate(data)
             }
         } catch (err: any) {
             toast.error(err.response?.data?.message)
