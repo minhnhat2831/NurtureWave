@@ -12,7 +12,6 @@ export default function SearchSettingModal() {
     const { selectedSearchSetting, setOpen, typeMode } = useSearchSettingStore()
     const isEdit = typeMode === "edit"
     const [showConfirm, setShowConfirm] = useState(false)
-    const { useCreateSearchSetting, useEditSearchSetting } = useSearchSetting()
     const method = useForm<searchSettingRequest>({
         resolver: zodResolver(searchSettingRequestScheme),
         values: isEdit ? {
@@ -21,25 +20,16 @@ export default function SearchSettingModal() {
             keyword: ""
         }
     })
+    const { useCreateSearchSetting, useEditSearchSetting } = useSearchSetting(method)
 
     const onSubmit = async (data: searchSettingRequest) => {
         try {
             const searchSettingData = { ...(data), count: 1, isSuggestion: true }
             if (isEdit && typeMode === 'edit') {
                 if (!selectedSearchSetting) return
-                useEditSearchSetting.mutate({ id: selectedSearchSetting?.id, data: searchSettingData }, {
-                    onSuccess: () => {
-                        method.reset(searchSettingData)
-                        setOpen(false)
-                    }
-                })
+                useEditSearchSetting.mutate({ id: selectedSearchSetting?.id, data: searchSettingData })
             } else {
-                useCreateSearchSetting.mutate(searchSettingData, {
-                    onSuccess: () => {
-                        method.reset()
-                        setOpen(false)
-                    }
-                })
+                useCreateSearchSetting.mutate(searchSettingData)
             }
         } catch (err: any) {
             const message = err.response?.data?.message

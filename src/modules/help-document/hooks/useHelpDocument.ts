@@ -3,10 +3,11 @@ import type { helpDocumentListItem, helpDocumentRequest } from "../schema/HelpDo
 import { createHelpDocument, deleteHelpDocument, editHelpDocument, getAllHelpDocument, getHelpDocumentDetail } from "../api/api"
 import { toast } from "react-toastify"
 import { useTableManager } from "@/hooks/useTableManager"
+import { useHelpDocumentStore } from "../store/useHelpDocumentStore"
 
-export default function useHelpDocument() {
+export default function useHelpDocument(methods?: any) {
     const queryClient = useQueryClient()
-
+    const { setOpen } = useHelpDocumentStore()
     const useGetAllHelpDocument = () => {
         const {
             data,
@@ -78,6 +79,32 @@ export default function useHelpDocument() {
         onSuccess: (err) => {
             toast.success(err.message)
             queryClient.invalidateQueries({ queryKey: ["help-documents"] })
+            methods.reset()
+            setOpen(false)
+        },
+        onError: (err: any) => {
+            const message = err.response?.data?.message
+            if (message.toLowerCase().includes("title")) {
+                methods.setError("title", {
+                    type: "server",
+                    message
+                })
+                return
+            }
+            if (message.toLowerCase().includes("status")) {
+                methods.setError("status", {
+                    type: "server",
+                    message
+                })
+                return
+            }
+            if (message.toLowerCase().includes("content")) {
+                methods.setError("content", {
+                    type: "server",
+                    message
+                })
+                return
+            }
         }
     })
 
@@ -87,6 +114,8 @@ export default function useHelpDocument() {
         onSuccess: (err) => {
             toast.success(err.message)
             queryClient.invalidateQueries({ queryKey: ['help-documents'] })
+            methods.reset()
+            setOpen(false)
         }
     })
 

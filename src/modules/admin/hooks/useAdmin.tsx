@@ -4,9 +4,11 @@ import { getAdminDetail, getAllAdmin, createAdmin, deleteAdmin, editAdmin } from
 import { toast } from "react-toastify"
 import { useMutation } from "@tanstack/react-query"
 import { useTableManager } from "@/hooks/useTableManager"
+import { useAdminStore } from "../store/useAdminStore"
 
-export default function useAdmin() {
+export default function useAdmin(methods?: any) {
     const queryClient = useQueryClient()
+    const { setOpen } = useAdminStore()
     const useGetAllAdmin = () => {
         const {
             data,
@@ -78,6 +80,26 @@ export default function useAdmin() {
         onSuccess: (res) => {
             toast.success(res.message)
             queryClient.invalidateQueries({ queryKey: ["admins"] })
+            methods.reset()
+            setOpen(false)
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.message
+            if (message?.toLowerCase().includes("username")) {
+                methods?.setError("username", {
+                    type: "server",
+                    message,
+                })
+                return
+            }
+            if (message?.toLowerCase().includes("email")) {
+                methods?.setError("email", {
+                    type: "server",
+                    message,
+                })
+                return
+            }
+            toast.error(message)
         },
     })
 
@@ -87,6 +109,8 @@ export default function useAdmin() {
         onSuccess: (res) => {
             toast.success(res.message)
             queryClient.invalidateQueries({ queryKey: ["admins"] })
+            methods.reset()
+            setOpen(false)
         },
     })
 

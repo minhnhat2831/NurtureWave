@@ -63,12 +63,12 @@ export const ConfirmModal = ({
         {/* Icon */}
         <div className="flex justify-center mb-4">
           <div className={cn('w-16 h-16 rounded-full flex items-center justify-center', config.iconBg)}>
-            <svg
-              className={cn('w-8 h-8', config.iconColor)}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+              <svg
+                className={cn('w-8 h-8', config.iconColor)}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
               {variant === 'danger' ? (
                 <path
                   strokeLinecap="round"
