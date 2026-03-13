@@ -1,7 +1,10 @@
-import { Button, FormSelect } from "@/components/common";
-import { CREDIT_TRANSACTION_TYPE_OPTION, DEBIT_TRANSACTION_TYPE_OPTION, STATUS_COLORS, TRANSACTION_STATUSES } from "../../constants";
 import { useTransactionModalStore } from "../../store/useTransactionModalStore";
 import { useContextModalStore } from "../../store/useContextModalStore";
+import TransactionStatusSelector from "../form/TransactionStatusSelector";
+import TransactionBaseFieldsForm from "../form/TransactionBaseFieldsForm";
+import TransactionCouponForm from "../form/TransactionCouponForm";
+import TransactionSelectController from "../form/TransactionSelectController";
+import { useTransactionDetailForm } from "../../hook/useTransactionDetailForm";
 
 interface TransactionDetailProps {
     showCreate?: boolean;
@@ -16,34 +19,69 @@ export default function TransactionDetailModal({
 }: TransactionDetailProps) {
     const { transactionType } = useTransactionModalStore()
     const { open } = useContextModalStore()
+    const {
+        selectedStatus,
+        transactionTypeOptions,
+        currencyOptions,
+        bankOptions,
+        isinOptions,
+        holdingsData,
+        isinDetail,
+        shouldShowTransactionDetailFields,
+        shouldShowCouponFields,
+        transactionConfig,
+        statusError,
+        onTransactionTypeChange,
+        onCurrencyChange,
+        onBankChange,
+        onIsinChange,
+        onSelectStatus,
+    } = useTransactionDetailForm(transactionType)
+
     return (<>
         <div className="z-30 sticky h-auto bg-white border border-gray-200 mx-4 mb-4">
             {showCreate && open && <>
                 <div className="p-5 mt-4">
-                    <FormSelect
-                        containerClassName="flex w-full gap-2 items-center"
-                        name="transactionType"
+                    <TransactionSelectController
+                        name="data.transactionType"
                         label="Transaction Type"
-                        options={!transactionType || transactionType === 'debit' ? DEBIT_TRANSACTION_TYPE_OPTION : CREDIT_TRANSACTION_TYPE_OPTION}
-                        placeholder="Select Status"
+                        options={transactionTypeOptions}
                         required
-                    >
-                    </FormSelect>
+                        placeholder="Select transaction type"
+                        onChange={onTransactionTypeChange}
+                    />
 
-                    <div className="mt-4 flex gap-2 items-center">
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                            Transaction Status
-                        </label>
-                        {TRANSACTION_STATUSES.map((status) => (
-                            <Button
-                                type="button"
-                                key={status}
-                                style={{ backgroundColor: STATUS_COLORS[status] }}
-                            >
-                                {status}
-                            </Button>
-                        ))}
-                    </div>
+                    <TransactionStatusSelector
+                        selectedStatus={selectedStatus}
+                        statusError={statusError}
+                        onSelectStatus={onSelectStatus}
+                    />
+
+                    {shouldShowTransactionDetailFields && (
+                        <TransactionBaseFieldsForm
+                            currencyOptions={currencyOptions}
+                            bankOptions={bankOptions}
+                            showClientFields={transactionConfig.showClientFields}
+                            descriptionEditable={transactionConfig.descriptionEditable}
+                            descriptionAutoFill={transactionConfig.descriptionAutoFill}
+                            showFees={transactionConfig.showFees}
+                            showBankCharges={transactionConfig.showBankCharges}
+                            showGstAmount={transactionConfig.showGstAmount}
+                            bankDirection={transactionConfig.bankDirection}
+                            onCurrencyChange={onCurrencyChange}
+                            onBankChange={onBankChange}
+                        />
+                    )}
+
+                    {shouldShowCouponFields && (
+                        <TransactionCouponForm
+                            isinOptions={isinOptions}
+                            onIsinChange={onIsinChange}
+                            holdingsData={holdingsData}
+                            isinDetail={isinDetail}
+                            bankOptions={bankOptions}
+                        />
+                    )}
                 </div>
 
                 {/* render form  */}
