@@ -141,6 +141,7 @@ export const TRANSACTION_FIELD_CONFIG: Record<TransactionType, FieldVisibility> 
   }),
 
   'Credit (Others)': createConfig(CREDIT_BASE, {
+    showClientFields: false,
     showFees: false,
     showBankCharges: false,
     descriptionAutoFill: '',
@@ -148,7 +149,9 @@ export const TRANSACTION_FIELD_CONFIG: Record<TransactionType, FieldVisibility> 
   }),
 
   'Deposit': createConfig(CREDIT_BASE, {
+    showClientFields: false,
     showFees: true,
+    showGstAmount: true,
     showBankCharges: true,
     descriptionAutoFill: 'Deposit',
   }),

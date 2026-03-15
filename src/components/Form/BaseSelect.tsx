@@ -25,6 +25,8 @@ export interface BaseSelectProps {
   name?: string;
   isClearable?: boolean;
   isSearchable?: boolean;
+  menuPortalTarget?: HTMLElement | null;
+  menuPosition?: 'absolute' | 'fixed';
 }
 
 export const BaseSelect: React.FC<BaseSelectProps> = ({
@@ -43,6 +45,8 @@ export const BaseSelect: React.FC<BaseSelectProps> = ({
   name,
   isClearable = true,
   isSearchable = true,
+  menuPortalTarget = typeof document !== 'undefined' ? document.body : undefined,
+  menuPosition = 'fixed',
 }) => {
     // Map options to react-select format
     const selectOptions = options.map((opt) => ({
@@ -111,6 +115,9 @@ export const BaseSelect: React.FC<BaseSelectProps> = ({
             dropdownIndicator: () => 'text-gray-400 hover:text-gray-600 transition-colors',
             clearIndicator: () => 'text-gray-400 hover:text-gray-600 transition-colors pr-1',
           }}
+          menuPortalTarget={menuPortalTarget}
+          menuPosition={menuPosition}
+          styles={{ menuPortal: (base) => ({ ...base, zIndex: 99999 }) }}
           noOptionsMessage={() => 'No options'}
         />
         {error && <p className="mt-1 text-xs text-red-500">{error}</p>}

@@ -2,10 +2,10 @@ import axiosInstance from '@/services/axios'
 import type { ApiResponse } from '../../../types/api.types'
 import type { CashTransactionPayload } from '../types/transaction.type'
 
-const MOCK_API = true
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_TRANSACTION_API === 'true'
 
 export const createCashTransaction = async (payload: CashTransactionPayload) => {
-  if (MOCK_API) {
+  if (USE_MOCK_API) {
     await new Promise<void>(resolve => setTimeout(resolve, 1000))
     return {
       success: true,
