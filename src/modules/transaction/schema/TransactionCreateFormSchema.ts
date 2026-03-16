@@ -1,6 +1,6 @@
 import * as z from "zod"
 import { REQUIRED_MESSAGE, StringRequired } from "@/constants/SchemaConstants"
-import { CREDIT_TRANSACTION_TYPES, getTransactionConfig } from "../constants"
+import { getTransactionConfig, isCouponPaymentTransactionType } from "../constants"
 
 const RequiredSelectString = z.preprocess(
   (value) => (value === null || value === undefined ? "" : value),
@@ -44,7 +44,7 @@ export const transactionCreateFormSchema = z.object({
   const req = (path: string) =>
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: REQUIRED_MESSAGE, path: ["data", path] })
 
-  if (transactionType === "Coupon Payment") {
+  if (isCouponPaymentTransactionType(typeof transactionType === "string" ? transactionType : "")) {
     if (!value.data.isin) req("isin")
     if (value.data.couponPaymentRate == null || value.data.couponPaymentRate <= 0) req("couponPaymentRate")
     if (!value.data.paymentDo) req("paymentDo")
@@ -261,7 +261,7 @@ export const cashTransactionDetailSchema = z.object({
 
 
 }).superRefine((data, ctx) => {
-  const isCoupon = data.cashOrderData.transactionType === CREDIT_TRANSACTION_TYPES[0]
+  const isCoupon = isCouponPaymentTransactionType(data.cashOrderData.transactionType)
 
     if(!isCoupon){
       if (!data.cashOrderData.amount) {

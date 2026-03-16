@@ -1,5 +1,6 @@
+import { useCallback, useEffect } from "react"
 import { useFormContext, type Path, type PathValue } from "react-hook-form"
-import { getTransactionConfig } from "../constants"
+import { getTransactionConfig, isCouponPaymentTransactionType } from "../constants"
 import {
   getTransactionCreateDefaultValues,
   type TransactionCreateFormInput,
@@ -17,24 +18,31 @@ interface StatusErrors {
 const FIELD_UPDATE_OPTIONS = { shouldValidate: false, shouldDirty: true } as const
 
 const getStringValue = (value: string | number | null) =>
-  typeof value === "string" ? value : ""
+  typeof value === "string" ? value : typeof value === "number" ? String(value) : ""
+
+const getWatchedString = (value: unknown) =>
+  typeof value === "string" ? value : typeof value === "number" ? String(value) : ""
 
 export const useTransactionDetailForm = (transactionType: "debit" | "credit" | null) => {
   const { watch, setValue, reset, formState: { errors } } = useFormContext<TransactionCreateFormInput>()
 
-  const setFormValue = <TName extends Path<TransactionCreateFormInput>>(
-    name: TName,
-    value: PathValue<TransactionCreateFormInput, TName>
-  ) => {
-    setValue(name, value, FIELD_UPDATE_OPTIONS)
-  }
+  const setFormValue = useCallback(
+    <TName extends Path<TransactionCreateFormInput>>(
+      name: TName,
+      value: PathValue<TransactionCreateFormInput, TName>
+    ) => {
+      setValue(name, value, FIELD_UPDATE_OPTIONS)
+    },
+    [setValue]
+  )
 
-  const selectedTransactionType = (watch("data.transactionType") as string | undefined) || ""
-  const selectedStatus = (watch("data.status") as string | undefined) || ""
-  const selectedCurrency = (watch("data.currency") as string | undefined) || ""
-  const selectedBankAccountUid = (watch("data.bankAccountUid") as string | undefined) || ""
-  const selectedIsin = (watch("data.isin") as string | undefined) || ""
-  const selectedOrgNum = (watch("data.clientName") as string | undefined) || ""
+  const selectedTransactionType = getWatchedString(watch("data.transactionType"))
+  const selectedStatus = getWatchedString(watch("data.status"))
+  const selectedCurrency = getWatchedString(watch("data.currency"))
+  const selectedBankAccountUid = getWatchedString(watch("data.bankAccountUid"))
+  const selectedIsin = getWatchedString(watch("data.isin"))
+  const selectedOrgNum = getWatchedString(watch("data.clientName"))
+  const selectedSubOrgNum = getWatchedString(watch("data.subOrgName"))
 
   const {
     bankAccounts,
@@ -55,11 +63,24 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
   })
 
   const transactionConfig = getTransactionConfig(selectedTransactionType)
-  const isCouponPayment = selectedTransactionType === "Coupon Payment"
+  const isCouponPayment = isCouponPaymentTransactionType(selectedTransactionType)
   const shouldShowTransactionDetailFields =
     !!selectedTransactionType && !isCouponPayment && transactionConfig.bankDirection !== null
   const shouldShowCouponFields = isCouponPayment
   const statusError = (errors as StatusErrors)?.data?.status?.message
+
+  useEffect(() => {
+    if (!selectedOrgNum || selectedSubOrgNum || subOrgOptions.length !== 1) {
+      return
+    }
+
+    const nextSubOrg = getStringValue(subOrgOptions[0].value)
+    if (!nextSubOrg) {
+      return
+    }
+
+    setFormValue("data.subOrgName", nextSubOrg)
+  }, [selectedOrgNum, selectedSubOrgNum, setFormValue, subOrgOptions])
 
   const onTransactionTypeChange = (nextType: string | number | null) => {
     const typeValue = typeof nextType === "string" ? nextType : ""
@@ -72,7 +93,7 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
         data: {
           ...defaults.data,
           transactionType: typeValue,
-          description: typeValue === "Coupon Payment" ? "Coupon Payment" : nextConfig.descriptionAutoFill || "",
+          description: isCouponPaymentTransactionType(typeValue) ? "Coupon Payment" : nextConfig.descriptionAutoFill || "",
         },
       },
       { keepErrors: false }
@@ -81,8 +102,6 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
 
   const onCurrencyChange = (nextCurrency: string | number | null) => {
     const currencyValue = getStringValue(nextCurrency)
-
-    setFormValue("data.currency", currencyValue)
 
     if (!currencyValue) {
       setFormValue("data.bankAccountUid", "")
@@ -102,8 +121,6 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
   const onBankChange = (nextBankUid: string | number | null) => {
     const bankValue = getStringValue(nextBankUid)
 
-    setFormValue("data.bankAccountUid", bankValue)
-
     if (!bankValue) {
       setFormValue("data.currency", "")
       return
@@ -119,7 +136,6 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
     const isinValue = getStringValue(nextIsin)
     const selectedIsinDetail = isinList.find((item) => item.isin === isinValue)
 
-    setFormValue("data.isin", isinValue)
     setFormValue("data.currency", selectedIsinDetail?.currency || "")
     setFormValue(
       "data.description",
@@ -132,23 +148,8 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
   }
 
   const onClientChange = (nextOrg: string | number | null) => {
-    const orgValue = getStringValue(nextOrg)
-
-    setFormValue("data.clientName", orgValue)
-
+    void nextOrg
     setFormValue("data.subOrgName", "")
-
-    if (!orgValue) return
-
-    if (subOrgOptions.length === 1) {
-      setFormValue("data.subOrgName", subOrgOptions[0].value)
-    }
-  }
-
-  const onSubOrgChange = (nextSubOrg: string | number | null) => {
-    const subOrgValue = getStringValue(nextSubOrg)
-
-    setFormValue("data.subOrgName", subOrgValue)
   }
 
   return {
@@ -171,6 +172,5 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
     onIsinChange,
     onSelectStatus,
     onClientChange,
-    onSubOrgChange
   }
 }

@@ -1,5 +1,6 @@
 import { FormCurrencyInput, FormDatePicker, FormInput } from "@/components/common"
 import type { SelectOption } from "@/components/Form"
+import type { FieldVisibility } from "../../constants"
 import TransactionSelectController from "./TransactionSelectController"
 
 interface TransactionBaseFieldsFormProps {
@@ -7,17 +8,15 @@ interface TransactionBaseFieldsFormProps {
   subOrgOptions: SelectOption[]
   currencyOptions: SelectOption[]
   bankOptions: SelectOption[]
-  showClientFields: boolean
-  descriptionEditable: boolean
-  descriptionAutoFill: string
-  showFees: boolean
-  showBankCharges: boolean
-  showGstAmount: boolean
-  bankDirection: "from" | "to" | null
-  onCurrencyChange: (value: string | number | null) => void
-  onBankChange: (value: string | number | null) => void
-  onOrgChange: (value: string | number | null) => void
-  onSubOrgChange: (value: string | number | null) => void
+  config: Pick<
+    FieldVisibility,
+    "showClientFields" | "descriptionEditable" | "descriptionAutoFill" | "showFees" | "showBankCharges" | "showGstAmount" | "bankDirection"
+  >
+  handlers: {
+    onCurrencyChange: (value: string | number | null) => void
+    onBankChange: (value: string | number | null) => void
+    onOrgChange: (value: string | number | null) => void
+  }
 }
 
 export default function TransactionBaseFieldsForm({
@@ -25,18 +24,20 @@ export default function TransactionBaseFieldsForm({
   subOrgOptions,
   currencyOptions,
   bankOptions,
-  showClientFields,
-  descriptionEditable,
-  descriptionAutoFill,
-  showFees,
-  showBankCharges,
-  showGstAmount,
-  bankDirection,
-  onOrgChange,
-  onSubOrgChange,
-  onCurrencyChange,
-  onBankChange,
+  config,
+  handlers,
 }: TransactionBaseFieldsFormProps) {
+  const {
+    showClientFields,
+    descriptionEditable,
+    descriptionAutoFill,
+    showFees,
+    showBankCharges,
+    showGstAmount,
+    bankDirection,
+  } = config
+  const { onOrgChange, onCurrencyChange, onBankChange } = handlers
+
   const bankLabel = bankDirection === "from" ? "Bank Details (From)" : "Bank Details (To)"
 
   return (
@@ -47,8 +48,8 @@ export default function TransactionBaseFieldsForm({
           label="Client Name"
           options={orgOptions}
           required
-          placeholder="Select currency"
-          onChange={onSubOrgChange}
+          placeholder="Select client"
+          onChange={onOrgChange}
         />
       )}
 
@@ -58,8 +59,7 @@ export default function TransactionBaseFieldsForm({
           label="Sub-org Name"
           options={subOrgOptions}
           required
-          placeholder="Select currency"
-          onChange={onOrgChange}
+          placeholder="Select sub-org"
         />
       )}
 

@@ -6,17 +6,9 @@ import type {
   TransactionCreateFormInput,
   TransactionCreateFormValues,
 } from "../schema/TransactionCreateFormSchema"
+import { isCouponPaymentTransactionType, toTransactionTypeSlug } from "../constants"
 
 type CouponRowInput = NonNullable<TransactionCreateFormInput["data"]["couponPayments"]>[number]
-
-export const toApiTransactionType = (value: string) => {
-  return value
-    .toLowerCase()
-    .replace(/[()]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim()
-}
 
 const mapCouponRow = (row: CouponRowInput): CouponPaymentRow => ({
   clientName: typeof row.clientName === "string" ? row.clientName : "",
@@ -37,14 +29,14 @@ export const buildCashTransactionPayload = (
   const transactionType = typeof data.transactionType === "string" ? data.transactionType : ""
 
   const sharedBase = {
-    transactionType: transactionType ? toApiTransactionType(transactionType) : "",
+    transactionType: transactionType ? toTransactionTypeSlug(transactionType) : "",
     createdDo: typeof data.createdDo === "string" ? data.createdDo : "",
     comments: typeof data.comments === "string" ? data.comments : "",
     files: data.files?.map((file) => file.name) ?? [],
     description: typeof data.description === "string" ? data.description : "",
   }
 
-  if (transactionType === "Coupon Payment") {
+  if (isCouponPaymentTransactionType(transactionType)) {
     const couponPayments = (data.couponPayments ?? []).map(mapCouponRow)
 
     return {

@@ -1,16 +1,16 @@
 import { BaseInput, Icons } from "@/components/common";
 import { Controller, useFormContext } from "react-hook-form";
-import { useContextModalStore } from "../../store/useContextModalStore";
 
 interface DocumentAttacmentProps {
     mode: "Create" | "Edit" | "View"
+    isOpen: boolean
 }
 
 export default function DocumentAttacmentModal({
-    mode
+    mode,
+    isOpen
 }: DocumentAttacmentProps) {
     const { control, watch, setValue } = useFormContext()
-    const { open } = useContextModalStore()
 
     const files = watch("data.files") || []
     const handleAddFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +33,7 @@ export default function DocumentAttacmentModal({
     }
     return (<>
         <div className="z-20 sticky h-auto bg-white border border-gray-200 mx-4 mb-4 px-4 overflow-y-auto">
-            {open && <>
+            {isOpen && <>
                 <div className="p-5 border-dashed border my-4">
                     {mode !== 'View' && <>
                         <div
