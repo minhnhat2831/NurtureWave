@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { FormProvider } from "react-hook-form"
 import { toast } from "react-toastify"
 import { Button, Icons } from "@/components/common"
@@ -6,11 +7,13 @@ import DocumentAttacmentModal from "./DocumentAttacmentModal"
 import TransactionDetailModal from "./TransactionDetailModal"
 import InternalCommentModal from "./InternalCommentsModal"
 import TransactionConfirmView from "./TransactionConfirmView"
-import { useContextModalStore } from "../../store/useContextModalStore"
+import { updateTransactionDetailLocally } from "../../api/transaction-list"
 import { getTransactionActionByStatus, useTransactionCreateForm } from "../../hook/useTransactionCreateForm"
 import type { TransactionCreateFormInput } from "../../schema/TransactionCreateFormSchema"
 import type { CashTransactionPayload } from "../../types"
 import { useCreatedTransactionsStore } from "../../store/useCreatedTransactionsStore"
+import { useModalTypeStore } from "../../store/useModalTypeStore"
+import { isEditableCashByStatusAndType, resolveEffectiveTransactionMode } from "../../utils/transactionMode"
 
 interface ModalTypeFormProps {
     typeForm?: 'debit' | 'credit' | null
@@ -32,17 +35,25 @@ export default function ModalForm({
     isLoading,
     mode
 }: ModalTypeFormProps) {
+    const queryClient = useQueryClient()
     const [step, setStep] = useState<"form" | "confirm">("form")
     const [pending, setPending] = useState<PendingConfirm | null>(null)
+    const [openSections, setOpenSections] = useState({
+        detail: false,
+        document: false,
+        comments: false,
+    })
     const addTransaction = useCreatedTransactionsStore((state) => state.addTransaction)
-    const { openModal, open, closeModal } = useContextModalStore()
+    const { selectedData } = useModalTypeStore()
     const closeAll = () => {
-        closeModal()
         onClose?.()
     }
 
     const { method, buildTransactionPayload, closeAfterCreate, isSubmitting, resetForm } = useTransactionCreateForm({ onClose: closeAll })
     const disabled = isLoading || isSubmitting
+    const selectedOrderStatus = selectedData?.orderStatusAlias || selectedData?.orderStatus
+    const isEditableCashDetail = isEditableCashByStatusAndType(selectedOrderStatus, selectedData?.transactionType)
+    const effectiveMode = resolveEffectiveTransactionMode(mode, selectedOrderStatus, selectedData?.transactionType)
 
     const resetConfirmState = () => {
         setStep("form")
@@ -64,6 +75,19 @@ export default function ModalForm({
 
     const handleConfirmCreate = () => {
         if (!pending) return
+
+        if (isEditableCashDetail && selectedData?.transactionId) {
+            updateTransactionDetailLocally(selectedData.transactionId, pending.values)
+            queryClient.invalidateQueries({ queryKey: ["list"] })
+            queryClient.invalidateQueries({ queryKey: ["list-detail", selectedData.transactionId] })
+            toast.success("Transaction updated locally")
+            resetConfirmState()
+            resetForm()
+            method.clearErrors()
+            closeAll()
+            return
+        }
+
         const payload = buildTransactionPayload(pending.values, pending.action)
         addTransaction(payload)
         toast.success("Transaction saved locally")
@@ -72,6 +96,13 @@ export default function ModalForm({
     }
 
     const handleBackToForm = () => setStep("form")
+
+    const toggleSection = (section: "detail" | "document" | "comments") => {
+        setOpenSections((prev) => ({
+            ...prev,
+            [section]: !prev[section],
+        }))
+    }
 
     const handleClose = () => {
         if (disabled) return
@@ -120,42 +151,48 @@ export default function ModalForm({
                         {step === "form" ? (
                             <>
                                 <div>
-                                    <div className="z-20 sticky top-0 bg-gray-100 border-b border-gray-200 mx-4 px-6 py-4 flex items-center justify-between" onClick={() => openModal(!open)}>
+                                    <div className="z-20 sticky top-0 bg-gray-100 border-b border-gray-200 mx-4 px-6 py-4 flex items-center justify-between" onClick={() => toggleSection("detail")}>
                                         <h2 className="text-xl font-semibold text-gray-900">Transaction Detail</h2>
                                         <button
                                             type="button"
                                             className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
                                         >
-                                            {open ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
+                                            {openSections.detail ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
                                         </button>
                                     </div>
-                                    <TransactionDetailModal mode={mode} />
+                                    {openSections.detail && (
+                                        <TransactionDetailModal mode={effectiveMode} isOpen={openSections.detail} />
+                                    )}
                                 </div>
 
                                 <div>
-                                    <div className="sticky top-0 bg-gray-100 border-b-2 border-gray-200 mx-4 px-6 py-4 flex items-center justify-between overflow-hidden" onClick={() => openModal(!open)}>
+                                    <div className="sticky top-0 bg-gray-100 border-b-2 border-gray-200 mx-4 px-6 py-4 flex items-center justify-between overflow-hidden" onClick={() => toggleSection("document")}>
                                         <h2 className="text-xl font-semibold text-gray-900">Document Attachment</h2>
                                         <button
                                             type="button"
                                             className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
                                         >
-                                            {open ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
+                                            {openSections.document ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
                                         </button>
                                     </div>
-                                    <DocumentAttacmentModal mode={mode} />
+                                    {openSections.document && (
+                                        <DocumentAttacmentModal mode={effectiveMode} isOpen={openSections.document} />
+                                    )}
                                 </div>
 
                                 <div>
-                                    <div className="sticky top-0 bg-gray-100 border-b border-gray-200 mx-4 px-6 py-4 flex items-center justify-between" onClick={() => openModal(!open)}>
+                                    <div className="sticky top-0 bg-gray-100 border-b border-gray-200 mx-4 px-6 py-4 flex items-center justify-between" onClick={() => toggleSection("comments")}>
                                         <h2 className="text-xl font-semibold text-gray-900">Internal Comments</h2>
                                         <button
                                             type="button"
                                             className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
                                         >
-                                            {open ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
+                                            {openSections.comments ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
                                         </button>
                                     </div>
-                                    <InternalCommentModal mode={mode} />
+                                    {openSections.comments && (
+                                        <InternalCommentModal mode={effectiveMode} isOpen={openSections.comments} />
+                                    )}
                                 </div>
 
                             </>
@@ -168,7 +205,7 @@ export default function ModalForm({
                                 {step === "form" ? (
                                     <>
                                         <Button type="button" onClick={handleClose} disabled={disabled}>Close</Button>
-                                        {mode === 'View' ? '' : <>
+                                        {effectiveMode === 'View' ? '' : <>
                                             <div className="flex">
                                                 <Button
                                                     type="button"
@@ -199,7 +236,7 @@ export default function ModalForm({
                                             disabled={disabled}
                                             loading={isSubmitting}
                                         >
-                                            Create
+                                            {effectiveMode === "Edit" ? "Save" : "Create"}
                                         </Button>
                                     </>
                                 )}

@@ -53,6 +53,8 @@ export const useTransactionFormOptions = ({
   selectedIsin,
   selectedOrgNum
 }: UseTransactionFormOptionsParams) => {
+  const shouldFetchCouponData = transactionType === "credit"
+
   const { data: currencies = [] } = useQuery({
     queryKey: ["transaction", "currencies"],
     queryFn: fetchListCurrency,
@@ -72,12 +74,15 @@ export const useTransactionFormOptions = ({
   const { data: isinResponse } = useQuery({
     queryKey: ["transaction", "isins"],
     queryFn: fetchListIsin,
+    enabled: shouldFetchCouponData,
+    retry: false,
   })
 
   const { data: holdingsResponse } = useQuery({
     queryKey: ["transaction", "isin-holdings", selectedIsin],
     queryFn: () => fetchIsinHolding(selectedIsin || undefined),
-    enabled: !!selectedIsin,
+    enabled: shouldFetchCouponData && !!selectedIsin,
+    retry: false,
   })
 
   const { data: bankAccountsResponse } = useQuery({
@@ -129,7 +134,7 @@ export const useTransactionFormOptions = ({
     const orgs = orgResponse?.data || []
 
     return orgs.map((org) => ({
-      value: org.id,
+      value: String(org.id),
       label: org.name,
     }))
   }, [orgResponse])
@@ -138,7 +143,7 @@ export const useTransactionFormOptions = ({
     const subOrgs = subOrgResponse?.data || []
 
     return subOrgs.map((sub) => ({
-      value: sub.orgId,
+      value: String(sub.subOrgId),
       label: sub.name,
     }))
   }, [subOrgResponse])

@@ -1,5 +1,6 @@
+import { useEffect, useMemo, useRef } from "react"
+import { useFormContext } from "react-hook-form"
 import { useTransactionModalStore } from "../../store/useTransactionModalStore"
-import { useContextModalStore } from "../../store/useContextModalStore"
 import { useModalTypeStore } from "../../store/useModalTypeStore"
 import TransactionStatusSelector from "../form/TransactionStatusSelector"
 import TransactionBaseFieldsForm from "../form/TransactionBaseFieldsForm"
@@ -8,17 +9,21 @@ import TransactionSelectController from "../form/TransactionSelectController"
 import TransactionConfirmView from "./TransactionConfirmView"
 import { useTransactionDetailForm } from "../../hook/useTransactionDetailForm"
 import { useTransactionDetail } from "../../hook/useTransactionDetail"
-import { mapTransactionDetailToForm } from "../../utils/transactionDetailForm"
+import { mapTransactionDetailToEditForm, mapTransactionDetailToForm } from "../../utils/transactionDetailForm"
+import { resolveEffectiveTransactionMode } from "../../utils/transactionMode"
+import type { TransactionCreateFormInput } from "../../schema/TransactionCreateFormSchema"
 
 interface TransactionDetailProps {
     mode: "Create" | "Edit" | "View"
+    isOpen: boolean
 }
 
-export default function TransactionDetailModal({ mode }: TransactionDetailProps) {
+export default function TransactionDetailModal({ mode, isOpen }: TransactionDetailProps) {
+    const { reset } = useFormContext<TransactionCreateFormInput>()
     const { transactionType } = useTransactionModalStore()
-    const { open } = useContextModalStore()
     const { selectedData } = useModalTypeStore()
     const transactionId = selectedData?.transactionId
+    const hydratedTransactionIdRef = useRef<string | null>(null)
 
     const { useGetListDetail } = useTransactionDetail()
 
@@ -27,20 +32,37 @@ export default function TransactionDetailModal({ mode }: TransactionDetailProps)
     })
     const detail = detailData?.data
 
-    const EDITABLE_STATUSES = ["draft", "pending-maker"]
+    const mappedView = useMemo(
+        () => (detail ? mapTransactionDetailToForm(detail) : undefined),
+        [detail]
+    )
+    const mappedEdit = useMemo(
+        () => (detail ? mapTransactionDetailToEditForm(detail) : undefined),
+        [detail]
+    )
 
-    const canEdit = EDITABLE_STATUSES.includes(detail?.cashOrderData?.orderStatus ?? "")
-
-    const mapped = detail ? mapTransactionDetailToForm(detail) : undefined
-
-    const effectiveMode =
-        mode === "View" && canEdit
-            ? "Edit"
-            : mode
+    const effectiveMode = resolveEffectiveTransactionMode(
+        mode,
+        detail?.cashOrderData?.orderStatus,
+        detail?.cashOrderData?.transactionType,
+    )
 
     const isCreate = effectiveMode === "Create"
     const isEdit = effectiveMode === "Edit"
     const isView = effectiveMode === "View"
+
+    useEffect(() => {
+        if (!isOpen) {
+            hydratedTransactionIdRef.current = null
+            return
+        }
+
+        if (!mappedEdit || !isEdit || !transactionId) return
+        if (hydratedTransactionIdRef.current === transactionId) return
+
+        reset(mappedEdit)
+        hydratedTransactionIdRef.current = transactionId
+    }, [isEdit, isOpen, mappedEdit, reset, transactionId])
 
     const {
         selectedStatus,
@@ -61,16 +83,15 @@ export default function TransactionDetailModal({ mode }: TransactionDetailProps)
         onBankChange,
         onIsinChange,
         onSelectStatus,
-        onClientChange,
-        onSubOrgChange
+        onClientChange
     } = useTransactionDetailForm(transactionType)
 
-    if (!open) return null
+    if (!isOpen) return null
 
     return (
         <div className="z-30 sticky h-auto bg-white border border-gray-200 mx-4 mb-4">
 
-            {(isCreate || (isEdit && canEdit)) && (
+            {(isCreate || isEdit) && (
                 <div className="p-5 mt-4">
 
                     <TransactionSelectController
@@ -94,17 +115,20 @@ export default function TransactionDetailModal({ mode }: TransactionDetailProps)
                             subOrgOptions={subOrgOptions}
                             currencyOptions={currencyOptions}
                             bankOptions={bankOptions}
-                            showClientFields={transactionConfig.showClientFields}
-                            descriptionEditable={transactionConfig.descriptionEditable}
-                            descriptionAutoFill={transactionConfig.descriptionAutoFill}
-                            showFees={transactionConfig.showFees}
-                            showBankCharges={transactionConfig.showBankCharges}
-                            showGstAmount={transactionConfig.showGstAmount}
-                            bankDirection={transactionConfig.bankDirection}
-                            onCurrencyChange={onCurrencyChange}
-                            onBankChange={onBankChange}
-                            onOrgChange={onClientChange}
-                            onSubOrgChange={onSubOrgChange}
+                            config={{
+                                showClientFields: transactionConfig.showClientFields,
+                                descriptionEditable: transactionConfig.descriptionEditable,
+                                descriptionAutoFill: transactionConfig.descriptionAutoFill,
+                                showFees: transactionConfig.showFees,
+                                showBankCharges: transactionConfig.showBankCharges,
+                                showGstAmount: transactionConfig.showGstAmount,
+                                bankDirection: transactionConfig.bankDirection,
+                            }}
+                            handlers={{
+                                onCurrencyChange,
+                                onBankChange,
+                                onOrgChange: onClientChange,
+                            }}
                         />
                     )}
 
@@ -121,8 +145,8 @@ export default function TransactionDetailModal({ mode }: TransactionDetailProps)
                 </div>
             )}
 
-            {(!canEdit || isView) && mapped && (
-                <TransactionConfirmView values={mapped} />
+            {isView && mappedView && (
+                <TransactionConfirmView values={mappedView} />
             )}
 
         </div>

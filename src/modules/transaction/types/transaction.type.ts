@@ -25,7 +25,7 @@ export interface Organization {
 export interface SubOrganization {
   id: string
   name: string
-  parentOrgId: string
+  parentOrgId?: string
   orgId: string
   subOrgId: string
   description?: string

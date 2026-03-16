@@ -13,36 +13,22 @@ export const CREDIT_TRANSACTION_TYPES = [
   'Deposit',
 ] as const
 
-export const TRANSACTION_STATUS_KEY_ENUM = [
-  'pending',
-  'draft',
-  'complete',
-  'pending-maker'
-] as const
-
-export const TRANSACTION_STATUS_KEY = [
-  TRANSACTION_STATUS_KEY_ENUM[0] as 'Pending',
-  TRANSACTION_STATUS_KEY_ENUM[1] as 'Draft',
-  TRANSACTION_STATUS_KEY_ENUM[2] as 'Complete',
-  TRANSACTION_STATUS_KEY_ENUM[3] as 'Pending'
-] as const
-
 export const TRANSACTION_TYPES = [
   ...DEBIT_TRANSACTION_TYPES,
   ...CREDIT_TRANSACTION_TYPES,
 ] as const
 
 export const DEBIT_TRANSACTION_ENUM = [
-  DEBIT_TRANSACTION_TYPES[0] as "debit-others",
-  DEBIT_TRANSACTION_TYPES[1] as "fee",
-  DEBIT_TRANSACTION_TYPES[2] as "tax-withholding",
-  DEBIT_TRANSACTION_TYPES[3] as "withdrawal",
+  "debit-others",
+  "fee",
+  "tax-withholding",
+  "withdrawal",
 ] as const
 
 export const CREDIT_TRANSACTION_ENUM = [
-  CREDIT_TRANSACTION_TYPES[0] as "coupon-payment",
-  CREDIT_TRANSACTION_TYPES[1] as "credit-others",
-  CREDIT_TRANSACTION_TYPES[2] as "deposit",
+  "coupon-payment",
+  "credit-others",
+  "deposit",
 ] as const
 
 export const DEBIT_TRANSACTION_TYPE_OPTION = [
@@ -84,8 +70,17 @@ export const TRANSACTION_STATUSES = ['Draft', 'Pending', 'Complete'] as const
 export type DebitTransactionType = (typeof DEBIT_TRANSACTION_TYPES)[number]
 export type CreditTransactionType = (typeof CREDIT_TRANSACTION_TYPES)[number]
 export type TransactionType = (typeof TRANSACTION_TYPES)[number]
+export type TransactionTypeKey = (typeof DEBIT_TRANSACTION_ENUM)[number] | (typeof CREDIT_TRANSACTION_ENUM)[number]
 export type TransactionStatus = (typeof TRANSACTION_STATUSES)[number]
 export type TransactionCategory = 'debit' | 'credit'
+
+export const toTransactionTypeSlug = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[()]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim()
 
 // ==================== FIELD VISIBILITY CONFIG ====================
 export interface FieldVisibility {
@@ -118,28 +113,30 @@ const createConfig = (
   return { ...DEFAULT_CONFIG, ...groupBase, ...overrides }
 }
 //FINAL CONFIG MAP
-export const TRANSACTION_FIELD_CONFIG: Record<TransactionType, FieldVisibility> = {
+export const TRANSACTION_FIELD_CONFIG: Record<TransactionTypeKey, FieldVisibility> = {
   // --- DEBIT GROUP ---
-  'Fee': createConfig(DEBIT_BASE, {
-    showFees: false,
+  'fee': createConfig(DEBIT_BASE, {
+    showFees: true,
     showBankCharges: false,
+    showGstAmount: true,
     descriptionAutoFill: 'Fees',
   }),
 
-  'Tax Withholding': createConfig(DEBIT_BASE, {
+  'tax-withholding': createConfig(DEBIT_BASE, {
     showFees: false,
     showBankCharges: false,
     descriptionAutoFill: 'Tax Withholding',
   }),
 
-  'Debit (Others)': createConfig(DEBIT_BASE, {
-    showFees: false,
-    showBankCharges: false,
+  'debit-others': createConfig(DEBIT_BASE, {
+    showFees: true,
+    showBankCharges: true,
+    showGstAmount: true,
     descriptionAutoFill: '',
     descriptionEditable: true,
   }),
 
-  'Withdrawal': createConfig(DEBIT_BASE, {
+  'withdrawal': createConfig(DEBIT_BASE, {
     showFees: true,
     showBankCharges: true,
     showGstAmount: true,
@@ -147,43 +144,50 @@ export const TRANSACTION_FIELD_CONFIG: Record<TransactionType, FieldVisibility> 
   }),
 
   // --- CREDIT GROUP ---
-  'Coupon Payment': createConfig(CREDIT_BASE, {
+  'coupon-payment': createConfig(CREDIT_BASE, {
     showClientFields: false,
     showFees: false,
     showBankCharges: false,
     descriptionAutoFill: 'Coupon Payment',
   }),
 
-  'Credit (Others)': createConfig(CREDIT_BASE, {
+  'credit-others': createConfig(CREDIT_BASE, {
     showClientFields: false,
-    showFees: false,
+    showFees: true,
     showBankCharges: false,
+    showGstAmount: true,
     descriptionAutoFill: '',
     descriptionEditable: true,
   }),
 
-  'Deposit': createConfig(CREDIT_BASE, {
+  'deposit': createConfig(CREDIT_BASE, {
     showClientFields: false,
     showFees: true,
     showGstAmount: true,
-    showBankCharges: true,
+    showBankCharges: false,
     descriptionAutoFill: 'Deposit',
   }),
 }
 // ==================== UTILITY HELPERS====================
+export const normalizeTransactionType = (type: string | undefined): TransactionTypeKey | undefined => {
+  if (!type) return undefined
+
+  const normalized = toTransactionTypeSlug(type)
+  return TRANSACTION_FIELD_CONFIG[normalized as TransactionTypeKey]
+    ? (normalized as TransactionTypeKey)
+    : undefined
+}
+
+export const isCouponPaymentTransactionType = (type: string | undefined) =>
+  normalizeTransactionType(type) === "coupon-payment"
+
 export const getTransactionConfig = (type: string | undefined): FieldVisibility => {
-  if (!type || !TRANSACTION_FIELD_CONFIG[type as TransactionType]) {
+  const normalizedType = normalizeTransactionType(type)
+
+  if (!normalizedType) {
     return DEFAULT_CONFIG
   }
-  return TRANSACTION_FIELD_CONFIG[type as TransactionType]
-}
-/*Kiểm tra xem có cần hiện Fees field*/
-export const shouldShowFee = (type: string): boolean => {
-  return getTransactionConfig(type).showFees
-}
-/*Kiểm tra xem có cần hiện GST field*/
-export const shouldShowGst = (type: string): boolean => {
-  return getTransactionConfig(type).showGstAmount
+  return TRANSACTION_FIELD_CONFIG[normalizedType]
 }
 
 export const STATUS_COLORS: Record<TransactionStatus, string> = {
@@ -192,33 +196,20 @@ export const STATUS_COLORS: Record<TransactionStatus, string> = {
   Complete: '#22c55e',
 }
 
-export const ORDER_STATUSES = ['Draft', 'Pending', 'Complete', 'Pending Maker'] as const
-export type OrderStatus = (typeof ORDER_STATUSES)[number]
-
-export const ORDER_STATUS_COLORS: Record<OrderStatus, string> = {
-  Draft: '#2563eb',
-  Pending: '#f97316',
-  Complete: '#22c55e',
-  "Pending Maker" : '#f97316'
-}
-
 export const getTransactionFormType = (transactionType: string) => {
+  const normalizedType = normalizeTransactionType(transactionType)
+  const creditTypes = new Set<TransactionTypeKey>(CREDIT_TRANSACTION_ENUM)
+  const debitTypes = new Set<TransactionTypeKey>(DEBIT_TRANSACTION_ENUM)
 
-  if (DEBIT_TRANSACTION_ENUM.includes(transactionType as any) || CREDIT_TRANSACTION_ENUM[1] || CREDIT_TRANSACTION_ENUM[2]) {
-    return "debit"
-  }
-
-  if (CREDIT_TRANSACTION_ENUM[0]) {
+  if (normalizedType && creditTypes.has(normalizedType)) {
     return "credit"
   }
 
-  return "debit"
-}
+  if (normalizedType && debitTypes.has(normalizedType)) {
+    return "debit"
+  }
 
-export const STATUS_COLORS_TYPE: Record<TransactionStatus, string> = {
-  Draft: '#2563eb',
-  Pending: '#f97316',
-  Complete: '#22c55e',
+  return "debit"
 }
 
 export const TRANSACTION_TYPE_MAP: Record<string,{ label: string}> = {

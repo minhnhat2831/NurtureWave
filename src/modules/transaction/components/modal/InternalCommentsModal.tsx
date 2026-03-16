@@ -1,17 +1,17 @@
 import { FormTextArea } from "@/components/common";
-import { useContextModalStore } from "../../store/useContextModalStore";
 
 interface InternalCommentsProps {
     mode: "Create" | "Edit" | "View"
+    isOpen: boolean
 }
 
 export default function InternalCommentModal({
-    mode
+    mode,
+    isOpen
 }: InternalCommentsProps) {
-    const { open } = useContextModalStore()
     return (<>
         <div className="z-20 sticky h-auto bg-white border border-gray-200 mx-4 mb-4 px-4 overflow-y-auto">
-            {open && <>
+            {isOpen && <>
                 <div className="mt-4">
                     <FormTextArea
                         label="Comment"
