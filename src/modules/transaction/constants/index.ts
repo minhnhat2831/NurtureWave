@@ -13,6 +13,20 @@ export const CREDIT_TRANSACTION_TYPES = [
   'Deposit',
 ] as const
 
+export const TRANSACTION_STATUS_KEY_ENUM = [
+  'pending',
+  'draft',
+  'complete',
+  'pending-maker'
+] as const
+
+export const TRANSACTION_STATUS_KEY = [
+  TRANSACTION_STATUS_KEY_ENUM[0] as 'Pending',
+  TRANSACTION_STATUS_KEY_ENUM[1] as 'Draft',
+  TRANSACTION_STATUS_KEY_ENUM[2] as 'Complete',
+  TRANSACTION_STATUS_KEY_ENUM[3] as 'Pending'
+] as const
+
 export const TRANSACTION_TYPES = [
   ...DEBIT_TRANSACTION_TYPES,
   ...CREDIT_TRANSACTION_TYPES,
@@ -32,37 +46,37 @@ export const CREDIT_TRANSACTION_ENUM = [
 ] as const
 
 export const DEBIT_TRANSACTION_TYPE_OPTION = [
-    {
-        value: DEBIT_TRANSACTION_ENUM[0],
-        label: DEBIT_TRANSACTION_TYPES[0]
-    },
-    {
-        value: DEBIT_TRANSACTION_ENUM[1],
-        label: DEBIT_TRANSACTION_TYPES[1]
-    },
-    {
-        value: DEBIT_TRANSACTION_ENUM[2],
-        label: DEBIT_TRANSACTION_TYPES[2]
-    },
-    {
-        value: DEBIT_TRANSACTION_ENUM[3],
-        label: DEBIT_TRANSACTION_TYPES[3]
-    },
+  {
+    value: DEBIT_TRANSACTION_ENUM[0],
+    label: DEBIT_TRANSACTION_TYPES[0]
+  },
+  {
+    value: DEBIT_TRANSACTION_ENUM[1],
+    label: DEBIT_TRANSACTION_TYPES[1]
+  },
+  {
+    value: DEBIT_TRANSACTION_ENUM[2],
+    label: DEBIT_TRANSACTION_TYPES[2]
+  },
+  {
+    value: DEBIT_TRANSACTION_ENUM[3],
+    label: DEBIT_TRANSACTION_TYPES[3]
+  },
 ]
 
 export const CREDIT_TRANSACTION_TYPE_OPTION = [
-    {
-        value: CREDIT_TRANSACTION_ENUM[0],
-        label: CREDIT_TRANSACTION_TYPES[0]
-    },
-    {
-        value: CREDIT_TRANSACTION_ENUM[1],
-        label: CREDIT_TRANSACTION_TYPES[1]
-    },
-    {
-        value: CREDIT_TRANSACTION_ENUM[2],
-        label: CREDIT_TRANSACTION_TYPES[2]
-    },
+  {
+    value: CREDIT_TRANSACTION_ENUM[0],
+    label: CREDIT_TRANSACTION_TYPES[0]
+  },
+  {
+    value: CREDIT_TRANSACTION_ENUM[1],
+    label: CREDIT_TRANSACTION_TYPES[1]
+  },
+  {
+    value: CREDIT_TRANSACTION_ENUM[2],
+    label: CREDIT_TRANSACTION_TYPES[2]
+  },
 ]
 
 export const TRANSACTION_STATUSES = ['Draft', 'Pending', 'Complete'] as const
@@ -176,4 +190,77 @@ export const STATUS_COLORS: Record<TransactionStatus, string> = {
   Draft: '#2563eb',
   Pending: '#f97316',
   Complete: '#22c55e',
+}
+
+export const ORDER_STATUSES = ['Draft', 'Pending', 'Complete', 'Pending Maker'] as const
+export type OrderStatus = (typeof ORDER_STATUSES)[number]
+
+export const ORDER_STATUS_COLORS: Record<OrderStatus, string> = {
+  Draft: '#2563eb',
+  Pending: '#f97316',
+  Complete: '#22c55e',
+  "Pending Maker" : '#f97316'
+}
+
+export const getTransactionFormType = (transactionType: string) => {
+
+  if (DEBIT_TRANSACTION_ENUM.includes(transactionType as any) || CREDIT_TRANSACTION_ENUM[1] || CREDIT_TRANSACTION_ENUM[2]) {
+    return "debit"
+  }
+
+  if (CREDIT_TRANSACTION_ENUM[0]) {
+    return "credit"
+  }
+
+  return "debit"
+}
+
+export const STATUS_COLORS_TYPE: Record<TransactionStatus, string> = {
+  Draft: '#2563eb',
+  Pending: '#f97316',
+  Complete: '#22c55e',
+}
+
+export const TRANSACTION_TYPE_MAP: Record<string,{ label: string}> = {
+  "debit-others": {
+    label: "Debit (Others)",
+  },
+  fee: {
+    label: "Fee",
+  },
+  "tax-withholding": {
+    label: "Tax Withholding",
+  },
+  withdrawal: {
+    label: "Withdrawal",
+  },
+
+  "coupon-payment": {
+    label: "Coupon Payment",
+  },
+  "credit-others": {
+    label: "Credit (Others)",
+  },
+  deposit: {
+    label: "Deposit",
+  }
+}
+
+export const TRANSACTION_STATUS_MAP: Record<string,{ label: string; style: string }> = {
+  pending: {
+    label: "Pending",
+    style : "#f59e0b"
+  },
+  draft: {
+    label: "Draft",
+    style: "#6b7280"
+  },
+  complete: {
+    label: "Complete",
+    style: "#22c55e"
+  },
+  "pending-maker": {
+    label: "Pending",
+    style: "#f97316"
+  }
 }

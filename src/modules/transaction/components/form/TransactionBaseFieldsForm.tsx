@@ -3,6 +3,8 @@ import type { SelectOption } from "@/components/Form"
 import TransactionSelectController from "./TransactionSelectController"
 
 interface TransactionBaseFieldsFormProps {
+  orgOptions: SelectOption[]
+  subOrgOptions: SelectOption[]
   currencyOptions: SelectOption[]
   bankOptions: SelectOption[]
   showClientFields: boolean
@@ -14,9 +16,13 @@ interface TransactionBaseFieldsFormProps {
   bankDirection: "from" | "to" | null
   onCurrencyChange: (value: string | number | null) => void
   onBankChange: (value: string | number | null) => void
+  onOrgChange: (value: string | number | null) => void
+  onSubOrgChange: (value: string | number | null) => void
 }
 
 export default function TransactionBaseFieldsForm({
+  orgOptions,
+  subOrgOptions,
   currencyOptions,
   bankOptions,
   showClientFields,
@@ -26,6 +32,8 @@ export default function TransactionBaseFieldsForm({
   showBankCharges,
   showGstAmount,
   bankDirection,
+  onOrgChange,
+  onSubOrgChange,
   onCurrencyChange,
   onBankChange,
 }: TransactionBaseFieldsFormProps) {
@@ -34,18 +42,24 @@ export default function TransactionBaseFieldsForm({
   return (
     <div className="mt-6 flex flex-col gap-4">
       {showClientFields && (
-        <FormInput
+        <TransactionSelectController
           name="data.clientName"
           label="Client Name"
-          disabled
+          options={orgOptions}
+          required
+          placeholder="Select currency"
+          onChange={onSubOrgChange}
         />
       )}
 
       {showClientFields && (
-        <FormInput
+        <TransactionSelectController
           name="data.subOrgName"
           label="Sub-org Name"
-          disabled
+          options={subOrgOptions}
+          required
+          placeholder="Select currency"
+          onChange={onOrgChange}
         />
       )}
 
@@ -74,7 +88,7 @@ export default function TransactionBaseFieldsForm({
         <FormCurrencyInput
           name="data.feesAmt"
           label="Fees"
-          placeholder = "0.00"
+          placeholder="0.00"
         />
       )}
 
@@ -89,7 +103,7 @@ export default function TransactionBaseFieldsForm({
         <FormCurrencyInput
           name="data.bankChargesAmt"
           label="Bank Charges"
-          placeholder = "0.00"
+          placeholder="0.00"
         />
       )}
 
@@ -103,7 +117,6 @@ export default function TransactionBaseFieldsForm({
         name="data.bankAccountUid"
         label={bankLabel}
         options={bankOptions}
-        required
         placeholder="Select bank account"
         onChange={onBankChange}
       />

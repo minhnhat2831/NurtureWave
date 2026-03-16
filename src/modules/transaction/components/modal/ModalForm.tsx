@@ -14,6 +14,7 @@ import { useCreatedTransactionsStore } from "../../store/useCreatedTransactionsS
 
 interface ModalTypeFormProps {
     typeForm?: 'debit' | 'credit' | null
+    mode: "Create" | "Edit" | "View"
     isOpen: boolean
     onClose?: () => void
     isLoading?: boolean
@@ -28,7 +29,8 @@ export default function ModalForm({
     typeForm,
     isOpen,
     onClose,
-    isLoading
+    isLoading,
+    mode
 }: ModalTypeFormProps) {
     const [step, setStep] = useState<"form" | "confirm">("form")
     const [pending, setPending] = useState<PendingConfirm | null>(null)
@@ -38,6 +40,7 @@ export default function ModalForm({
         closeModal()
         onClose?.()
     }
+
     const { method, buildTransactionPayload, closeAfterCreate, isSubmitting, resetForm } = useTransactionCreateForm({ onClose: closeAll })
     const disabled = isLoading || isSubmitting
 
@@ -126,7 +129,7 @@ export default function ModalForm({
                                             {open ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
                                         </button>
                                     </div>
-                                    <TransactionDetailModal showCreate />
+                                    <TransactionDetailModal mode={mode} />
                                 </div>
 
                                 <div>
@@ -139,7 +142,7 @@ export default function ModalForm({
                                             {open ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
                                         </button>
                                     </div>
-                                    <DocumentAttacmentModal showCreate />
+                                    <DocumentAttacmentModal mode={mode} />
                                 </div>
 
                                 <div>
@@ -152,8 +155,9 @@ export default function ModalForm({
                                             {open ? <Icons.expand style="rotate-180" /> : <Icons.expand style="rotate-0" />}
                                         </button>
                                     </div>
-                                    <InternalCommentModal showCreate />
+                                    <InternalCommentModal mode={mode} />
                                 </div>
+
                             </>
                         ) : (
                             pending && <TransactionConfirmView values={pending.values} />
@@ -164,25 +168,27 @@ export default function ModalForm({
                                 {step === "form" ? (
                                     <>
                                         <Button type="button" onClick={handleClose} disabled={disabled}>Close</Button>
-                                        <div className="flex">
-                                            <Button
-                                                type="button"
-                                                className="bg-red-500 hover:bg-red-400"
-                                                onClick={handleSaveAndClose}
-                                                disabled={disabled}
-                                                loading={isSubmitting}
-                                            >
-                                                Save and Close
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                onClick={handleSaveAndSubmit}
-                                                disabled={disabled}
-                                                loading={isSubmitting}
-                                            >
-                                                Save and Submit
-                                            </Button>
-                                        </div>
+                                        {mode === 'View' ? '' : <>
+                                            <div className="flex">
+                                                <Button
+                                                    type="button"
+                                                    className="bg-red-500 hover:bg-red-400"
+                                                    onClick={handleSaveAndClose}
+                                                    disabled={disabled}
+                                                    loading={isSubmitting}
+                                                >
+                                                    Save and Close
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    onClick={handleSaveAndSubmit}
+                                                    disabled={disabled}
+                                                    loading={isSubmitting}
+                                                >
+                                                    Save and Submit
+                                                </Button>
+                                            </div>
+                                        </>}
                                     </>
                                 ) : (
                                     <>
