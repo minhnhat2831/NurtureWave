@@ -23,11 +23,11 @@ export interface Organization {
 }
 
 export interface SubOrganization {
-  id?: string
+  id: string
   name: string
-  parentOrgId?: string
-  orgId?: string
-  subOrgId?: string
+  parentOrgId: string
+  orgId: string
+  subOrgId: string
   description?: string
 }
 

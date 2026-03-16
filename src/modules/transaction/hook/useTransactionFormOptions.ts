@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { fetchListBankAccount, fetchListCurrency, fetchListIsin, fetchIsinHolding } from "../api"
+import { fetchListBankAccount, fetchListCurrency, fetchListIsin, fetchIsinHolding, fetchListOrg, fetchListSubOrg } from "../api"
 import {
   CREDIT_TRANSACTION_TYPE_OPTION,
   DEBIT_TRANSACTION_TYPE_OPTION,
@@ -43,17 +43,30 @@ const buildUniqueBankOptions = (
 interface UseTransactionFormOptionsParams {
   transactionType: "debit" | "credit" | null
   selectedCurrency: string
-  selectedIsin: string
+  selectedIsin: string,
+  selectedOrgNum?: string
 }
 
 export const useTransactionFormOptions = ({
   transactionType,
   selectedCurrency,
   selectedIsin,
+  selectedOrgNum
 }: UseTransactionFormOptionsParams) => {
   const { data: currencies = [] } = useQuery({
     queryKey: ["transaction", "currencies"],
     queryFn: fetchListCurrency,
+  })
+
+  const { data: orgResponse } = useQuery({
+    queryKey: ["transaction", "org"],
+    queryFn: fetchListOrg,
+  })
+
+  const { data: subOrgResponse } = useQuery({
+    queryKey: ["transaction", "subOrg", selectedOrgNum],
+    queryFn: () => fetchListSubOrg(selectedOrgNum),
+    enabled: !!selectedOrgNum,
   })
 
   const { data: isinResponse } = useQuery({
@@ -112,6 +125,24 @@ export const useTransactionFormOptions = ({
     [currencies]
   )
 
+  const orgOptions = useMemo(() => {
+    const orgs = orgResponse?.data || []
+
+    return orgs.map((org) => ({
+      value: org.id,
+      label: org.name,
+    }))
+  }, [orgResponse])
+
+  const subOrgOptions = useMemo(() => {
+    const subOrgs = subOrgResponse?.data || []
+
+    return subOrgs.map((sub) => ({
+      value: sub.orgId,
+      label: sub.name,
+    }))
+  }, [subOrgResponse])
+
   const bankOptions = useMemo(() => buildUniqueBankOptions(bankAccounts), [bankAccounts])
 
   return {
@@ -123,5 +154,7 @@ export const useTransactionFormOptions = ({
     isinDetail,
     currencyOptions,
     bankOptions,
+    orgOptions,
+    subOrgOptions
   }
 }

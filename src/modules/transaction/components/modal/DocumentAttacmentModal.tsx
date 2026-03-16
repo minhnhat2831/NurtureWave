@@ -3,15 +3,11 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useContextModalStore } from "../../store/useContextModalStore";
 
 interface DocumentAttacmentProps {
-    showCreate?: boolean;
-    showEdit?: boolean;
-    showView?: boolean
+    mode: "Create" | "Edit" | "View"
 }
 
 export default function DocumentAttacmentModal({
-    showCreate,
-    showEdit,
-    showView
+    mode
 }: DocumentAttacmentProps) {
     const { control, watch, setValue } = useFormContext()
     const { open } = useContextModalStore()
@@ -37,40 +33,43 @@ export default function DocumentAttacmentModal({
     }
     return (<>
         <div className="z-20 sticky h-auto bg-white border border-gray-200 mx-4 mb-4 px-4 overflow-y-auto">
-            {showCreate && open && <>
+            {open && <>
                 <div className="p-5 border-dashed border my-4">
-                    <div
-                        className="flex justify-center"
-                        onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }}
-                        onDrop={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }}
-                    >
-                        <Controller
-                            name="data.files"
-                            control={control}
-                            render={() => (
-                                <>
-                                    <label className="flex flex-col justify-center items-center cursor-pointer overflow-hidden">
-                                        <span className="inline-flex items-center px-4 py-2 border border-red-500 text-red-500 rounded-md">
-                                            <Icons.upload style="mr-2" />
-                                            Browse Files
-                                        </span>
-                                        <p className="text-center">Drag and drop your files here or <span className="browse-link">Browse Files</span></p>
-                                        <p className="text-center">PDF, DOC, DOCX (Max 5MB)</p>
-                                    <BaseInput 
-                                        type="file"
-                                        multiple
-                                        accept=".pdf,.doc,.docx"
-                                        className="hidden"
-                                        onChange={handleAddFiles}
-                                    />
-                                    </label>
-                                </>
-                            )}
-                        />
-                    </div>
+                    {mode !== 'View' && <>
+                        <div
+                            className="flex justify-center"
+                            onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}
+                        >
+
+                            <Controller
+                                name="data.files"
+                                control={control}
+                                render={() => (
+                                    <>
+                                        <label className="flex flex-col justify-center items-center cursor-pointer overflow-hidden">
+                                            <span className="inline-flex items-center px-4 py-2 border border-red-500 text-red-500 rounded-md">
+                                                <Icons.upload style="mr-2" />
+                                                Browse Files
+                                            </span>
+                                            <p className="text-center">Drag and drop your files here or <span className="browse-link">Browse Files</span></p>
+                                            <p className="text-center">PDF, DOC, DOCX (Max 5MB)</p>
+                                            <BaseInput
+                                                type="file"
+                                                multiple
+                                                accept=".pdf,.doc,.docx"
+                                                className="hidden"
+                                                onChange={handleAddFiles}
+                                            />
+                                        </label>
+                                    </>
+                                )}
+                            />
+                        </div>
+                    </>}
 
                     {files.length > 0 && (
                         <div className="mt-4 space-y-2">
@@ -101,17 +100,6 @@ export default function DocumentAttacmentModal({
             </>
             }
 
-            {showEdit && <>
-                <div>
-
-                </div>
-            </>}
-
-            {showView && <>
-                <div>
-
-                </div>
-            </>}
         </div >
     </>)
 }

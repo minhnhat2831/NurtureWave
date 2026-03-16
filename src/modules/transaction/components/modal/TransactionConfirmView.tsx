@@ -29,7 +29,7 @@ interface TransactionConfirmViewProps {
 
 export default function TransactionConfirmView({ values }: TransactionConfirmViewProps) {
   const d = values.data
-  const isCoupon = d.transactionType === "Coupon Payment"
+  const isCoupon = d.transactionType === "Coupon Payment" || d.transactionType === "coupon-payment"
 
   return (
     <div className="px-6 py-4">

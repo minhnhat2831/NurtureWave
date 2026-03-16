@@ -34,6 +34,7 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
   const selectedCurrency = (watch("data.currency") as string | undefined) || ""
   const selectedBankAccountUid = (watch("data.bankAccountUid") as string | undefined) || ""
   const selectedIsin = (watch("data.isin") as string | undefined) || ""
+  const selectedOrgNum = (watch("data.clientName") as string | undefined) || ""
 
   const {
     bankAccounts,
@@ -43,11 +44,14 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
     holdingsData,
     isinDetail,
     currencyOptions,
+    orgOptions,
+    subOrgOptions,
     bankOptions,
   } = useTransactionFormOptions({
     transactionType,
     selectedCurrency,
     selectedIsin,
+    selectedOrgNum
   })
 
   const transactionConfig = getTransactionConfig(selectedTransactionType)
@@ -127,11 +131,33 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
     setFormValue("data.status", status)
   }
 
+  const onClientChange = (nextOrg: string | number | null) => {
+    const orgValue = getStringValue(nextOrg)
+
+    setFormValue("data.clientName", orgValue)
+
+    setFormValue("data.subOrgName", "")
+
+    if (!orgValue) return
+
+    if (subOrgOptions.length === 1) {
+      setFormValue("data.subOrgName", subOrgOptions[0].value)
+    }
+  }
+
+  const onSubOrgChange = (nextSubOrg: string | number | null) => {
+    const subOrgValue = getStringValue(nextSubOrg)
+
+    setFormValue("data.subOrgName", subOrgValue)
+  }
+
   return {
     selectedStatus,
     transactionTypeOptions,
     currencyOptions,
     bankOptions,
+    orgOptions,
+    subOrgOptions,
     isinOptions,
     holdingsData,
     isinDetail,
@@ -144,5 +170,7 @@ export const useTransactionDetailForm = (transactionType: "debit" | "credit" | n
     onBankChange,
     onIsinChange,
     onSelectStatus,
+    onClientChange,
+    onSubOrgChange
   }
 }
